@@ -4,7 +4,7 @@ const canvas = document.getElementById("canvas"),
     ctx = canvas.getContext('2d');
     CANVAS_WIDTH = canvas.width,
     CANVAS_HEIGHT = canvas.height,
-    playerRadius = 5;
+    playerRadius = 4.5;
 
 // Player
 let playerX = canvas.width / 2;
@@ -12,7 +12,8 @@ let playerY = canvas.height / 2;
 
 let gameIndex = 0;
 
-const players = [];
+const players = [],
+    immuneLength = 100;
 
 // Controls
 let leftPressed = false;
@@ -59,7 +60,7 @@ function drawPlayers() {
 
 function detectCollisions() {
     for (let i = 0; i < players.length; i++) {
-        if (isOutOfBounds(players[i].x, players[i].y)) {
+        if (players[i].isOutOfBounds()) {
             return true;
         }
         for (let j = 0; j < players.length; j++) {
@@ -74,16 +75,6 @@ function detectCollisions() {
                 }
             }
         }
-    }
-
-    return false;
-}
-
-function isOutOfBounds(x, y) {
-    const OOB = playerRadius/2 + 1;
-
-    if (x <= 0 + OOB || x >= CANVAS_WIDTH - OOB || y <= 0 + OOB || y >= CANVAS_HEIGHT - OOB) {
-       return true;
     }
 
     return false;
