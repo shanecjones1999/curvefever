@@ -1,22 +1,24 @@
 class Trail {
-    constructor(ctx, size, color) {
-        this.ctx = ctx;
-        this.size = size;
-        this.color = color;
+    constructor() {
         this.segments = [];
     }
 
     addPoint(point) {
-        this.segments[this.segments.length - 1].push(point);
+        this.segments[this.segments.length - 1].addPoint(point);
+    }
+
+    createSegment() {
+        const segment = new TrailSegment();
+        this.segments.push(segment);
     }
 
     addSegment(segment) {
         this.segments.addSegment(segment);
     }
 
-    draw() {
+    draw(ctx, size, color) {
         for (let i = 0; i < this.segments.length; i++) {
-            this.segments[i].draw(this.ctx, this.size, this.color);
+            this.segments[i].draw(ctx, size, color);
         }
     }
 }
@@ -30,14 +32,14 @@ class TrailSegment {
         this.points.push(point);
     }
 
-    draw(color, size, ctx) {
+    draw(ctx, size, color) {
         if (this.points.length < 2) {
-            return; // Not enough points to draw a line
+            return;
         }
 
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = size * 2; // Adjust line width as needed
+        ctx.lineWidth = size * 2;
 
         ctx.moveTo(this.points[0].x, this.points[0].y);
         for (let i = 1; i < this.points.length; i++) {
@@ -57,13 +59,5 @@ class TrailPoint {
         this.color = color;
         this.size = radius;
         this.idx = idx;
-    }
-
-    draw() {
-        this.ctx.beginPath();
-        this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        this.ctx.fillStyle = this.color;
-        this.ctx.fill();
-        this.ctx.closePath();
     }
 }

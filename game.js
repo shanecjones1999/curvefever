@@ -43,9 +43,9 @@ function draw() {
     drawPlayers();
     gameIndex++;
 
-    // if (detectCollisions()) {
-    //     return;
-    // }
+    if (detectCollisions()) {
+        return;
+    }
 
     requestAnimationFrame(draw);
 }
@@ -59,12 +59,18 @@ function drawPlayers() {
 
 function detectCollisions() {
     for (let i = 0; i < players.length; i++) {
+        if (isOutOfBounds(players[i].x, players[i].y)) {
+            return true;
+        }
         for (let j = 0; j < players.length; j++) {
-            const trail = players[j].trail;
-            for (let k = 0; k < trail.length; k++) {
-                if (players[i].hasTrail && isValidTrail(trail[k], i == j) 
-                    && areCirclesOverlapping(players[i].x, players[i].y, trail[k].x, trail[k].y)) {
+            const segments = players[j].trail.segments;
+            for (let k = 0; k < segments.length; k++) {
+                const points = segments[k].points;
+                for (let l = 0; l < points.length; l ++) {
+                    if (players[i].hasTrail && isValidTrailPoint(points[l], i == j) 
+                    && areCirclesOverlapping(players[i].x, players[i].y, points[l].x, points[l].y)) {
                     return true;
+                }
                 }
             }
         }
@@ -73,22 +79,33 @@ function detectCollisions() {
     return false;
 }
 
-function isValidTrail(trail, self) {
+function isOutOfBounds(x, y) {
+    const OOB = playerRadius/2 + 1;
+
+    if (x <= 0 + OOB || x >= CANVAS_WIDTH - OOB || y <= 0 + OOB || y >= CANVAS_HEIGHT - OOB) {
+       return true;
+    }
+
+    return false;
+}
+
+function isValidTrailPoint(segment, self) {
     if (!self) {
         return true;
     }
 
-    return gameIndex - trail.idx > playerRadius + 1;
+    // We do not want to look for a collision if this is our trail within ~ playerRadius * 2 pixels
+    return gameIndex - segment.idx > playerRadius * 2;
 }
 
 function areCirclesOverlapping(x1, y1, x2, y2) {
-    // Calculate the distance between the centers of the circles
     const dx = x2 - x1;
     const dy = y2 - y1;
     const distance = Math.sqrt(dx * dx + dy * dy);
 
-    // Check if the distance is less than or equal to the sum of the radii
-    return distance <= this.playerRadius * 2;
+    // TODO
+    // Investigate this, currently a hacked constant but may not be ideal
+    return distance <= this.playerRadius * 2 - 3;
 }
 
 function setup() {
