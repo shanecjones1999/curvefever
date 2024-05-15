@@ -10,6 +10,9 @@ const canvas = document.getElementById("canvas"),
 let gameIndex = 0,
     game = undefined;
 
+let playerControls = new Controls();
+playerControls.setKeyBindings();
+
 // Controls
 let leftPressed = false;
 let rightPressed = false;
@@ -19,17 +22,17 @@ document.addEventListener("keydown", keyDownHandler);
 document.addEventListener("keyup", keyUpHandler);
 
 function keyDownHandler(event) {
-    if (event.key === "ArrowLeft") {
+    if (event.key === playerControls.leftKey) {
         leftPressed = true;
-    } else if (event.key === "ArrowRight") {
+    } else if (event.key === playerControls.rightKey) {
         rightPressed = true;
     }
 }
 
 function keyUpHandler(event) {
-    if (event.key === "ArrowLeft") {
+    if (event.key === playerControls.leftKey) {
         leftPressed = false;
-    } else if (event.key === "ArrowRight") {
+    } else if (event.key === playerControls.rightKey) {
         rightPressed = false;
     }
 }
