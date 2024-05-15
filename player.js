@@ -1,18 +1,18 @@
 class Player {
-    constructor(x, y, ctx, radius, id, color) {
-        this.x = x;
-        this.y = y;
+    constructor(ctx, radius, id, color) {
+        this.x = Math.floor(Math.random() * (CANVAS_WIDTH - 200)) + 100;
+        this.y = Math.floor(Math.random() * (CANVAS_HEIGHT - 200)) + 100;
         this.ctx = ctx;
         this.color = color;
-        this.playerAngle = Math.PI / 2;
+        this.playerAngle = Math.random() * 2 * Math.PI;
         this.trail = new Trail();
         this.trail.createSegment();
         this.size = radius;
         this.turningSpeed = 0.045;
         this.playerSpeed = 2;
         this.id = id
-        this.lastTrailSkip = 0;
-        this.hasTrail = true;
+        this.lastTrailSkip = immuneLength;
+        this.hasTrail = false;
     }
 
     draw() {
@@ -30,29 +30,27 @@ class Player {
 
     drawArrow() {
         const arrowWidth = 10,
-            arrowLength = 20;
+            arrowLength = 20,
+            arrowToPlayerDistance = 50;
 
         this.ctx.save(); // Save the current canvas state
     
-        // Calculate the coordinates of the arrow's tip based on player position and direction
-        const arrowTipX = this.x + 50 * Math.cos(this.playerAngle);
-        const arrowTipY = this.y + 50 * Math.sin(this.playerAngle);
+        const arrowTipX = this.x + arrowToPlayerDistance * Math.cos(this.playerAngle);
+        const arrowTipY = this.y + arrowToPlayerDistance * Math.sin(this.playerAngle);
     
         this.ctx.translate(arrowTipX, arrowTipY);
     
-        // Rotate the canvas context by the angle (in radians) and an additional 180 degrees
         this.ctx.rotate(this.playerAngle + Math.PI);
     
-        // Draw the arrow
         this.ctx.fillStyle = this.color;
         this.ctx.beginPath();
-        this.ctx.moveTo(0, 0); // Arrow tip (origin)
-        this.ctx.lineTo(arrowLength, arrowWidth / 2); // Right side of arrow
-        this.ctx.lineTo(arrowLength, -arrowWidth / 2); // Left side of arrow
+        this.ctx.moveTo(0, 0);
+        this.ctx.lineTo(arrowLength, arrowWidth / 2);
+        this.ctx.lineTo(arrowLength, -arrowWidth / 2);
         this.ctx.closePath();
         this.ctx.fill();
     
-        this.ctx.restore(); // Restore the canvas state to avoid affecting other drawings
+        this.ctx.restore();
     }
 
     move(leftPressed, rightPressed) {
@@ -62,10 +60,14 @@ class Player {
             this.playerAngle += this.turningSpeed;
         }
 
+        if (gameIndex == immuneLength) {
+            this.hasTrail = true;
+        }
+
         this.x += this.playerSpeed * Math.cos(this.playerAngle);
         this.y += this.playerSpeed * Math.sin(this.playerAngle);
 
-        if ((gameIndex - this.lastTrailSkip) > 50 && Math.floor(Math.random() * 100) == 1) {
+        if (gameIndex > immuneLength && (gameIndex - this.lastTrailSkip) > 30 && Math.floor(Math.random() * 100) == 1) {
             this.hasTrail = false;
             this.lastTrailSkip = gameIndex;
             this.trail.createSegment();
@@ -81,6 +83,9 @@ class Player {
     }
 
     isOutOfBounds() {
+        if (!this.hasTrail) {
+            return false;
+        }
         const OOB = playerRadius/2 + 1;
 
         if (this.x <= 0 + OOB || this.x >= CANVAS_WIDTH - OOB || this.y <= 0 + OOB || this.y >= CANVAS_HEIGHT - OOB) {

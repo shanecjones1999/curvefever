@@ -100,7 +100,7 @@ function areCirclesOverlapping(x1, y1, x2, y2) {
 }
 
 function setup() {
-    const player = new Player(playerX, playerY, ctx, playerRadius, 1, "blue");
+    const player = new Player(ctx, playerRadius, 1, "blue");
     players.push(player);
     draw();
 }
