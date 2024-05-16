@@ -65,26 +65,30 @@ let gameIndex = 0,
 let leftPressed = false;
 let rightPressed = false;
 
+let isResetting = false;
+
 function draw() {
-    ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
-    game.draw();
-    gameIndex++;
-
-    if (game.detectCollisions()) {
-        return;
-    }
-
-    requestAnimationFrame(draw);
-}
-
-function setup() {
-    // const player = new Player(ctx, playerRadius, 1, "blue"), 
-    //     players = [player];
     
-    game = new Game(players);
+  
+    if (!isResetting) {
+        ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+        game.draw();
+        gameIndex++;
+    }
+  
+    if (game.roundOver() && !isResetting) {
+        isResetting = true; // Set the flag to true to indicate reset process
+        setTimeout(() => {
+            game.resetPlayers();
+            isResetting = false; // Reset the flag after resetting players
+      }, 1000); // 5000 milliseconds = 5 seconds
+    }
+  
+    requestAnimationFrame(draw);
+  }
 
-    // let playerControls = new Controls();
-    // playerControls.setKeyBindings();
+function setup() {    
+    game = new Game(players);
 
     draw();
 }

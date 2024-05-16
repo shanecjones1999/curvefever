@@ -5,7 +5,7 @@ class Game {
         this.players = players
         this.score = new Score();
     }
-
+    
     draw() {
         for (let i = 0; i < this.players.length; i++) {
             this.players[i].draw();
@@ -14,6 +14,31 @@ class Game {
                 this.players[i].move();
             }
         }
+
+        this.detectCollisions();
+    }
+
+    resetPlayers() {
+        for (let i = 0; i < this.players.length; i++) {
+            this.players[i].reset();
+        }
+    }
+
+    roundOver() {
+        const playerCount = this.players.length;
+        if (playerCount == 1) {
+            return this.players[0].eliminated;
+        }
+
+        let eliminatedCount = 0;
+
+        for (let i = 0; i < this.players.length; i++) {
+            if (this.players[i].eliminated) {
+                eliminatedCount += 1;
+            }
+        }
+
+        return eliminatedCount >= playerCount - 1;
     }
     
     detectCollisions() {

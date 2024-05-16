@@ -20,7 +20,6 @@ class Player {
         this.id = id
         this.lastTrailSkip = immuneLength;
         this.hasTrail = false;
-
         this.eliminated = false;
     }
 
@@ -71,6 +70,19 @@ class Player {
         this.ctx.fillStyle = this.color
         this.ctx.fill();
         this.ctx.closePath();
+    }
+
+    reset() {
+        this.x = Math.floor(Math.random() * (CANVAS_WIDTH - 200)) + 100;
+        this.y = Math.floor(Math.random() * (CANVAS_HEIGHT - 200)) + 100;
+        this.playerAngle = Math.random() * 2 * Math.PI;
+        this.trail = new Trail();
+        this.trail.createSegment();
+        this.lastTrailSkip = immuneLength;
+        this.hasTrail = false;
+        this.eliminated = false;
+        this.leftPressed = false;
+        this.rightPressed = false;
     }
 
     drawArrow() {
