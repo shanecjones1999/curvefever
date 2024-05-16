@@ -1,7 +1,14 @@
 class Player {
     constructor(ctx, radius, id, color) {
+        this.keyDownHandler = this.keyDownHandler.bind(this);
+        this.keyUpHandler = this.keyUpHandler.bind(this);
+
         this.x = Math.floor(Math.random() * (CANVAS_WIDTH - 200)) + 100;
         this.y = Math.floor(Math.random() * (CANVAS_HEIGHT - 200)) + 100;
+        this.leftKey = undefined;
+        this.rightKey = undefined;
+        this.leftPressed = false;
+        this.rightPressed = false;
         this.ctx = ctx;
         this.color = color;
         this.playerAngle = Math.random() * 2 * Math.PI;
@@ -13,6 +20,44 @@ class Player {
         this.id = id
         this.lastTrailSkip = immuneLength;
         this.hasTrail = false;
+
+        this.eliminated = false;
+    }
+
+    setKeys(left, right) {
+        this.leftKey = left;
+        this.rightKey = right;
+
+        this.setListeners();
+    }
+
+    setListeners() {
+        document.addEventListener("keydown", this.keyDownHandler);
+        document.addEventListener("keyup", this.keyUpHandler);
+    }
+
+    keyDownHandler(event) {
+        this.setKeyDown(event.key);
+    }
+
+    setKeyDown(key) {
+        if (key === this.leftKey) {
+            this.leftPressed = true;
+        } else if (key === this.rightKey) {
+            this.rightPressed = true;
+        }
+    }
+
+    keyUpHandler(event) {
+        this.setKeyUp(event.key);
+    }
+
+    setKeyUp(key) {
+        if (key === this.leftKey) {
+            this.leftPressed = false;
+        } else if (key === this.rightKey) {
+            this.rightPressed = false;
+        }
     }
 
     draw() {
@@ -53,10 +98,10 @@ class Player {
         this.ctx.restore();
     }
 
-    move(leftPressed, rightPressed) {
-        if (leftPressed) {
+    move() {
+        if (this.leftPressed) {
             this.playerAngle -= this.turningSpeed;
-        } else if (rightPressed) {
+        } else if (this.rightPressed) {
             this.playerAngle += this.turningSpeed;
         }
 

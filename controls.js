@@ -1,7 +1,7 @@
 class Controls {
     constructor() {
-        this.leftKey = "ArrowLeft";
-        this.rightKey = "ArrowRight";
+        this.leftKey = undefined;
+        this.rightKey = undefined;
     }
 
     setKeyBindings() {

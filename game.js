@@ -1,5 +1,7 @@
 class Game {
     constructor(players) {
+        this.round = 1;
+        this.totalRounds = 10;
         this.players = players
         this.score = new Score();
     }
@@ -7,14 +9,17 @@ class Game {
     draw() {
         for (let i = 0; i < this.players.length; i++) {
             this.players[i].draw();
-            this.players[i].move(leftPressed, rightPressed);
+
+            if (!players[i].eliminated) {
+                this.players[i].move();
+            }
         }
     }
     
     detectCollisions() {
         for (let i = 0; i < this.players.length; i++) {
             if (this.players[i].isOutOfBounds()) {
-                return true;
+                this.players[i].eliminated = true;
             }
             for (let j = 0; j < this.players.length; j++) {
                 const segments = this.players[j].trail.segments;
@@ -23,7 +28,7 @@ class Game {
                     for (let l = 0; l < points.length; l ++) {
                         if (this.players[i].hasTrail && this.isValidTrailPoint(points[l], i == j) 
                         && this.areCirclesOverlapping(this.players[i].x, this.players[i].y, points[l].x, points[l].y)) {
-                        return true;
+                            this.players[i].eliminated = true;
                     }
                     }
                 }
