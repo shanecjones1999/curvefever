@@ -79,6 +79,8 @@ function draw() {
     if (game.roundOver() && !isResetting) {
         isResetting = true; // Set the flag to true to indicate reset process
         setTimeout(() => {
+            gameIndex = 0;
+            game.round += 1
             game.resetPlayers();
             isResetting = false; // Reset the flag after resetting players
       }, 1000); // 5000 milliseconds = 5 seconds
