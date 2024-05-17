@@ -68,8 +68,6 @@ let rightPressed = false;
 let isResetting = false;
 
 function draw() {
-    
-  
     if (!isResetting) {
         ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
         game.draw();
@@ -83,7 +81,7 @@ function draw() {
             game.round += 1
             game.resetPlayers();
             isResetting = false; // Reset the flag after resetting players
-      }, 1000); // 5000 milliseconds = 5 seconds
+      }, 3000); // 5000 milliseconds = 5 seconds
     }
   
     requestAnimationFrame(draw);

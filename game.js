@@ -40,11 +40,20 @@ class Game {
 
         return eliminatedCount >= playerCount - 1;
     }
+
+    eliminatePlayer(player) {
+        player.eliminated = true;
+        for (let i = 0; i < this.players.length; i++) {
+            if (players[i].id != player.id) {
+                players[i].score += 1;
+            }
+        }
+    }
     
     detectCollisions() {
         for (let i = 0; i < this.players.length; i++) {
             if (this.players[i].isOutOfBounds()) {
-                this.players[i].eliminated = true;
+                this.eliminatePlayer(this.players[i]);
             }
             for (let j = 0; j < this.players.length; j++) {
                 const segments = this.players[j].trail.segments;
@@ -53,7 +62,7 @@ class Game {
                     for (let l = 0; l < points.length; l ++) {
                         if (this.players[i].hasTrail && this.isValidTrailPoint(points[l], i == j) 
                         && this.areCirclesOverlapping(this.players[i].x, this.players[i].y, points[l].x, points[l].y)) {
-                            this.players[i].eliminated = true;
+                            this.eliminatePlayer(this.players[i]);
                     }
                     }
                 }
