@@ -80,6 +80,7 @@ function draw() {
             gameIndex = 0;
             game.round += 1
             game.resetPlayers();
+            displayScores()
             isResetting = false; // Reset the flag after resetting players
       }, 3000); // 5000 milliseconds = 5 seconds
     }
@@ -92,3 +93,29 @@ function setup() {
 
     draw();
 }
+
+function displayScores() {
+    // Get the container element
+    const scoreboard = document.getElementById('scoreboard');
+
+    if (!game) {
+        return;
+    }
+    
+    // Clear any existing content
+    scoreboard.innerHTML = '';
+
+    // Loop through each player and create an HTML element for each
+    game.players.forEach(player => {
+        // Create a new div element
+        const playerDiv = document.createElement('div');
+        
+        // Set the content of the div
+        playerDiv.textContent = `${player.id}: ${player.score}`;
+        
+        // Append the new div to the scoreboard container
+        scoreboard.appendChild(playerDiv);
+    });
+}
+
+displayScores();

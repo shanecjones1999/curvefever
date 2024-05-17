@@ -21,7 +21,7 @@ class Player {
         this.lastTrailSkip = immuneLength;
         this.hasTrail = false;
         this.eliminated = false;
-        this.points = 0;
+        this.score = 0;
     }
 
     setKeys(left, right) {
