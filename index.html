@@ -7,15 +7,24 @@
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="modal" id="addPlayersModal">
-        <div class="modal-content">
-          <h2>Add Players</h2>
-          <div id="playerList"></div>
-          <button id="addPlayerBtn">Add Player</button>
-          <button id="startGameBtn">Start Game</button>
+    <div class="container">
+        <div id="scoreboard">
+            <h2>Scoreboard</h2>
+            <div id="score-list">
+
+            </div>
         </div>
-      </div>
-      <div id="scoreboard"></div>
+        <div class="game-container">
+            <div class="modal" id="addPlayersModal">
+                <div class="modal-content">
+                <h2>Add Players</h2>
+                <div id="playerList"></div>
+                <button id="addPlayerBtn">Add Player</button>
+                <button id="startGameBtn">Start Game</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <canvas id="canvas" width="800" height="600"></canvas>
 </body>
     <script src="controls.js"></script>

@@ -42,12 +42,23 @@ class Game {
     }
 
     eliminatePlayer(player) {
+        if (player.eliminated) {
+            return;
+        }
+
         player.eliminated = true;
         for (let i = 0; i < this.players.length; i++) {
-            if (players[i].id != player.id) {
-                players[i].score += 1;
+            if (!this.players[i].eliminated && this.players[i].id != player.id) {
+                this.players[i].score += 1;
+                this.updateScoreBoard(this.players[i].id, this.players[i].score);
+                
             }
         }
+    }
+
+    updateScoreBoard(id, score) {
+        const playerScore = document.getElementById(`player-${id}-score`);
+        playerScore.textContent = `Player ${id}: ${score}`;
     }
     
     detectCollisions() {

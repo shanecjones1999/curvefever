@@ -61,10 +61,6 @@ const canvas = document.getElementById("canvas"),
 let gameIndex = 0,
     game = undefined;
 
-// Controls
-let leftPressed = false;
-let rightPressed = false;
-
 let isResetting = false;
 
 function draw() {
@@ -75,14 +71,13 @@ function draw() {
     }
   
     if (game.roundOver() && !isResetting) {
-        isResetting = true; // Set the flag to true to indicate reset process
+        isResetting = true;
         setTimeout(() => {
             gameIndex = 0;
             game.round += 1
             game.resetPlayers();
-            displayScores()
-            isResetting = false; // Reset the flag after resetting players
-      }, 3000); // 5000 milliseconds = 5 seconds
+            isResetting = false;
+      }, 3000);
     }
   
     requestAnimationFrame(draw);
@@ -90,32 +85,25 @@ function draw() {
 
 function setup() {    
     game = new Game(players);
-
+    displayScores()
     draw();
 }
 
 function displayScores() {
-    // Get the container element
-    const scoreboard = document.getElementById('scoreboard');
+    const scoreboard = document.getElementById('score-list');
 
     if (!game) {
         return;
     }
-    
-    // Clear any existing content
+
     scoreboard.innerHTML = '';
 
-    // Loop through each player and create an HTML element for each
     game.players.forEach(player => {
-        // Create a new div element
         const playerDiv = document.createElement('div');
-        
-        // Set the content of the div
-        playerDiv.textContent = `${player.id}: ${player.score}`;
-        
-        // Append the new div to the scoreboard container
+        playerDiv.textContent = `Player ${player.id + 1}: ${player.score}`;
+        playerDiv.style.color = player.color;
+        playerDiv.classList.add('player-score');
+        playerDiv.id = `player-${player.id}-score`;
         scoreboard.appendChild(playerDiv);
     });
 }
-
-displayScores();

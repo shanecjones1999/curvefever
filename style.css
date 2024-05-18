@@ -1,7 +1,11 @@
 html, body {
     margin: 0px;
     padding: 0px;
-    background-color: #3e3e3e; 
+    background-color: #1a1a1a; 
+}
+
+.container {
+    display: flex;
 }
 
 #canvas {
@@ -26,7 +30,7 @@ html, body {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 9999;
 }
-  
+
 .modal-content {
     position: absolute;
     top: 50%;
@@ -37,4 +41,17 @@ html, body {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
-  
+
+#scoreboard {
+    margin-top: 100px;
+    margin-left: 50px;
+    color: white;
+}
+
+#scoreboard h2 {
+    font-size: 42px;
+}
+
+.player-score {
+    font-size: 32px;
+}
