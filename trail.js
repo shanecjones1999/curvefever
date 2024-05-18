@@ -7,6 +7,10 @@ class Trail {
         this.segments[this.segments.length - 1].addPoint(point);
     }
 
+    lastSegment() {
+        return this.segments[this.segments.length - 1];
+    }
+
     createSegment() {
         const segment = new TrailSegment();
         this.segments.push(segment);
@@ -30,6 +34,10 @@ class TrailSegment {
 
     addPoint(point) {
         this.points.push(point);
+    }
+
+    lastPoint() {
+        return this.points[this.points.length - 1];
     }
 
     draw(ctx, size, color) {

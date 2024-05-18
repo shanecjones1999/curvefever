@@ -1,5 +1,3 @@
-const baseSpeed = 2;
-
 class Player {
     constructor(ctx, radius, id, color) {
         this.keyDownHandler = this.keyDownHandler.bind(this);
@@ -70,7 +68,7 @@ class Player {
         this.trail.draw(this.ctx, this.size, this.color);
         this.ctx.beginPath();
         this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        this.ctx.fillStyle = this.color
+        this.ctx.fillStyle = this.color;
         this.ctx.fill();
         this.ctx.closePath();
     }
@@ -86,6 +84,8 @@ class Player {
         this.eliminated = false;
         this.leftPressed = false;
         this.rightPressed = false;
+        this.turningSpeed = 0.045;
+        this.speed = 2;
     }
 
     drawArrow() {
@@ -127,19 +127,42 @@ class Player {
         this.x += this.speed * Math.cos(this.playerAngle);
         this.y += this.speed * Math.sin(this.playerAngle);
 
-        if (gameIndex > immuneLength && (gameIndex - this.lastTrailSkip) > 30 && Math.floor(Math.random() * 100) == 1) {
+        if (this.shouldSkip()) {
             this.hasTrail = false;
             this.lastTrailSkip = gameIndex;
-            this.trail.createSegment();
-            setTimeout(() => {
+        }
+
+        if (!this.hasTrail && gameIndex > immuneLength) {
+            const dist = this.distanceFromHeadToRecentTrail();
+            if (dist >= this.size * 6) {
+                this.trail.createSegment();
                 this.hasTrail = true;
-            }, 175 / (this.speed/2));
+            }
+            //this.trail.createSegment();
         }
         
         if (gameIndex >= immuneLength && this.hasTrail) {
             const trailPoint = new TrailPoint(this.x, this.y, ctx, playerRadius, gameIndex, this.color);
             this.trail.addPoint(trailPoint);
         }
+    }
+
+    distanceFromHeadToRecentTrail() {
+        const lastPoint = this.trail.lastSegment().lastPoint();
+        return this.distanceBetweenPoints(this.x, this.y, lastPoint.x, lastPoint.y);
+
+    }
+
+    distanceBetweenPoints(x1, y1, x2, y2) {
+        const dx = x2 - x1,
+            dy = y2 - y1,
+            distance = Math.sqrt(dx * dx + dy * dy);
+
+        return distance;
+    }
+
+    shouldSkip() {
+        return gameIndex > immuneLength && (gameIndex - this.lastTrailSkip) > minTrailGap && Math.floor(Math.random() * 100) == 1;
     }
 
     isOutOfBounds() {

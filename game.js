@@ -85,7 +85,7 @@ class Game {
                     const points = segments[k].points;
                     for (let l = 0; l < points.length; l ++) {
                         if (this.players[i].hasTrail && this.isValidTrailPoint(points[l], i == j) 
-                        && this.areCirclesOverlapping(this.players[i].x, this.players[i].y, points[l].x, points[l].y, playerRadius * 2 - 3)) {
+                        && this.areCirclesOverlapping(this.players[i].x, this.players[i].y, points[l].x, points[l].y, this.players[i].size + points[l].size - 3)) {
                             this.eliminatePlayer(this.players[i]);
                     }
                     }
@@ -106,9 +106,9 @@ class Game {
     }
     
     areCirclesOverlapping(x1, y1, x2, y2, radius) {
-        const dx = x2 - x1;
-        const dy = y2 - y1;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        const dx = x2 - x1,
+            dy = y2 - y1,
+            distance = Math.sqrt(dx * dx + dy * dy);
     
         // TODO
         // Investigate this, currently a hacked constant but may not be ideal
@@ -118,10 +118,35 @@ class Game {
     generatePowerUps() {
         const shouldGenerate = Math.floor(Math.random() * 250) == 1;
         if (shouldGenerate) {
-            const x = Math.floor(Math.random() * CANVAS_WIDTH),
-                y = Math.floor(Math.random() * CANVAS_HEIGHT),
-                powerUp = new SelfSpeedUp(x, y, gameIndex);
-            this.powerUps.push(powerUp);
+            const powerUpToGenerate = Math.floor(Math.random() * 4),
+                x = Math.floor(Math.random() * CANVAS_WIDTH),
+                y = Math.floor(Math.random() * CANVAS_HEIGHT);
+
+            let powerUp = undefined;
+
+            switch (powerUpToGenerate) {
+                case 0:
+                    powerUp = new SpeedUp(x, y, gameIndex, this.players, "green", "Speed", false);
+                    this.powerUps.push(powerUp);
+                    break;
+                case 1:
+                    powerUp = new SpeedUp(x, y, gameIndex, this.players, "red", "Speed", true);
+                    this.powerUps.push(powerUp);
+                    break;
+                case 2:
+                    powerUp = new SlowDown(x, y, gameIndex, this.players, "green", "Slow", false);
+                    this.powerUps.push(powerUp);
+                    break;
+                case 3:
+                    powerUp = new SlowDown(x, y, gameIndex, this.players, "red", "Slow", true);
+                    this.powerUps.push(powerUp);
+                    break;
+                default:
+                    console.error("Invalid power-up to generate");
+            }
+
+            //const powerUp = new SelfSpeedUp(x, y, gameIndex, "green", "Speedy");
+            //this.powerUps.push(powerUp);
         }
     }
 
@@ -138,7 +163,7 @@ class Game {
                 if (!this.players[i].eliminated && 
                     this.areCirclesOverlapping(this.players[i].x, this.players[i].y, this.powerUps[j].x, this.powerUps[j].y, playerRadius + this.powerUps[j].radius)) {
                         // apply powerup
-                        this.powerUps[j].apply(this.players[i]);
+                        this.powerUps[j].apply(this.players[i].id);
 
                         // remove it from game
                         this.removePowerUp(this.powerUps[j].id);
