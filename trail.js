@@ -47,10 +47,11 @@ class TrailSegment {
 
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = size * 2;
+        
 
         ctx.moveTo(this.points[0].x, this.points[0].y);
         for (let i = 1; i < this.points.length; i++) {
+            ctx.lineWidth = this.points[i].size * 2;
             ctx.lineTo(this.points[i].x, this.points[i].y);
         }
 

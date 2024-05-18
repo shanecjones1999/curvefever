@@ -22,6 +22,8 @@ class Player {
         this.hasTrail = false;
         this.eliminated = false;
         this.score = 0;
+        this.hasSharpTurns = false;
+        this.hasFloatPowerUp = false;
     }
 
     setKeys(left, right) {
@@ -77,8 +79,7 @@ class Player {
         this.x = Math.floor(Math.random() * (CANVAS_WIDTH - 200)) + 100;
         this.y = Math.floor(Math.random() * (CANVAS_HEIGHT - 200)) + 100;
         this.playerAngle = Math.random() * 2 * Math.PI;
-        this.trail = new Trail();
-        this.trail.createSegment();
+        this.resetTrail();
         this.lastTrailSkip = immuneLength;
         this.hasTrail = false;
         this.eliminated = false;
@@ -86,6 +87,31 @@ class Player {
         this.rightPressed = false;
         this.turningSpeed = 0.045;
         this.speed = 2;
+        this.size = playerRadius;
+        this.hasFloatPowerUp = false;
+    }
+
+    toggleSharpTurns() {
+        this.hasSharpTurns = !this.hasSharpTurns;
+    }
+
+    toggleThickLine() {
+        this.size *= 2;
+    }
+
+    toggleThinLine() {
+        this.size /= 2;
+    }
+
+    reverseControls() {
+        const tempLeft = this.leftKey;
+        this.leftKey = this.rightKey;
+        this.rightKey = tempLeft;
+    }
+
+    resetTrail() {
+        this.trail = new Trail();
+        this.trail.createSegment();
     }
 
     drawArrow() {
@@ -114,10 +140,17 @@ class Player {
     }
 
     move() {
+        const angleIncrement = this.hasSharpTurns ? Math.PI / 2 : this.turningSpeed;
+
         if (this.leftPressed) {
-            this.playerAngle -= this.turningSpeed;
+            this.playerAngle -= angleIncrement;
         } else if (this.rightPressed) {
-            this.playerAngle += this.turningSpeed;
+            this.playerAngle += angleIncrement;
+        }
+
+        if (this.hasSharpTurns) {
+            this.leftPressed = false;
+            this.rightPressed = false;
         }
 
         if (gameIndex == immuneLength) {
@@ -132,7 +165,7 @@ class Player {
             this.lastTrailSkip = gameIndex;
         }
 
-        if (!this.hasTrail && gameIndex > immuneLength) {
+        if (!this.hasFloatPowerUp && !this.hasTrail && gameIndex > immuneLength) {
             const dist = this.distanceFromHeadToRecentTrail();
             if (dist >= this.size * 6) {
                 this.trail.createSegment();
@@ -142,7 +175,7 @@ class Player {
         }
         
         if (gameIndex >= immuneLength && this.hasTrail) {
-            const trailPoint = new TrailPoint(this.x, this.y, ctx, playerRadius, gameIndex, this.color);
+            const trailPoint = new TrailPoint(this.x, this.y, ctx, this.size, gameIndex, this.color);
             this.trail.addPoint(trailPoint);
         }
     }
