@@ -1,3 +1,5 @@
+const baseSpeed = 2;
+
 class Player {
     constructor(ctx, radius, id, color) {
         this.keyDownHandler = this.keyDownHandler.bind(this);
@@ -16,7 +18,7 @@ class Player {
         this.trail.createSegment();
         this.size = radius;
         this.turningSpeed = 0.045;
-        this.playerSpeed = 2;
+        this.speed = 2;
         this.id = id
         this.lastTrailSkip = immuneLength;
         this.hasTrail = false;
@@ -122,8 +124,8 @@ class Player {
             this.hasTrail = true;
         }
 
-        this.x += this.playerSpeed * Math.cos(this.playerAngle);
-        this.y += this.playerSpeed * Math.sin(this.playerAngle);
+        this.x += this.speed * Math.cos(this.playerAngle);
+        this.y += this.speed * Math.sin(this.playerAngle);
 
         if (gameIndex > immuneLength && (gameIndex - this.lastTrailSkip) > 30 && Math.floor(Math.random() * 100) == 1) {
             this.hasTrail = false;
@@ -131,7 +133,7 @@ class Player {
             this.trail.createSegment();
             setTimeout(() => {
                 this.hasTrail = true;
-            }, 175);
+            }, 175 / (this.speed/2));
         }
         
         if (gameIndex >= immuneLength && this.hasTrail) {

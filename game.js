@@ -4,6 +4,8 @@ class Game {
         this.totalRounds = 10;
         this.players = players
         this.score = new Score();
+        this.powerUpsEnabled = true;
+        this.powerUps = [];
     }
     
     draw() {
@@ -16,6 +18,17 @@ class Game {
         }
 
         this.detectCollisions();
+
+        if (this.powerUpsEnabled) {
+            this.generatePowerUps();
+            this.displayPowerUps();
+            this.detectPowerUpCollisons()
+        }
+    }
+
+    reset() {
+        this.resetPlayers();
+        this.powerUps = [];
     }
 
     resetPlayers() {
@@ -58,7 +71,7 @@ class Game {
 
     updateScoreBoard(id, score) {
         const playerScore = document.getElementById(`player-${id}-score`);
-        playerScore.textContent = `Player ${id}: ${score}`;
+        playerScore.textContent = `Player ${id + 1}: ${score}`;
     }
     
     detectCollisions() {
@@ -72,7 +85,7 @@ class Game {
                     const points = segments[k].points;
                     for (let l = 0; l < points.length; l ++) {
                         if (this.players[i].hasTrail && this.isValidTrailPoint(points[l], i == j) 
-                        && this.areCirclesOverlapping(this.players[i].x, this.players[i].y, points[l].x, points[l].y)) {
+                        && this.areCirclesOverlapping(this.players[i].x, this.players[i].y, points[l].x, points[l].y, playerRadius * 2 - 3)) {
                             this.eliminatePlayer(this.players[i]);
                     }
                     }
@@ -92,13 +105,49 @@ class Game {
         return gameIndex - segment.idx > playerRadius * 2;
     }
     
-    areCirclesOverlapping(x1, y1, x2, y2) {
+    areCirclesOverlapping(x1, y1, x2, y2, radius) {
         const dx = x2 - x1;
         const dy = y2 - y1;
         const distance = Math.sqrt(dx * dx + dy * dy);
     
         // TODO
         // Investigate this, currently a hacked constant but may not be ideal
-        return distance <= playerRadius * 2 - 3;
+        return distance <= radius;
+    }
+
+    generatePowerUps() {
+        const shouldGenerate = Math.floor(Math.random() * 250) == 1;
+        if (shouldGenerate) {
+            const x = Math.floor(Math.random() * CANVAS_WIDTH),
+                y = Math.floor(Math.random() * CANVAS_HEIGHT),
+                powerUp = new SelfSpeedUp(x, y, gameIndex);
+            this.powerUps.push(powerUp);
+        }
+    }
+
+    displayPowerUps() {
+        for (let i = 0; i < this.powerUps.length; i++) {
+            this.powerUps[i].draw();
+        }
+    }
+
+    detectPowerUpCollisons() {
+        for (let i = 0; i < this.players.length; i++) {
+            // check if player is alive
+            for (let j = 0; j < this.powerUps.length; j++) {
+                if (!this.players[i].eliminated && 
+                    this.areCirclesOverlapping(this.players[i].x, this.players[i].y, this.powerUps[j].x, this.powerUps[j].y, playerRadius + this.powerUps[j].radius)) {
+                        // apply powerup
+                        this.powerUps[j].apply(this.players[i]);
+
+                        // remove it from game
+                        this.removePowerUp(this.powerUps[j].id);
+                    }
+            }
+        }
+    }
+
+    removePowerUp(id) {
+        this.powerUps = this.powerUps.filter(powerUp => powerUp.id != id);
     }
 }

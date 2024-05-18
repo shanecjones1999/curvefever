@@ -73,9 +73,9 @@ function draw() {
     if (game.roundOver() && !isResetting) {
         isResetting = true;
         setTimeout(() => {
+            game.reset();
             gameIndex = 0;
             game.round += 1
-            game.resetPlayers();
             isResetting = false;
       }, 3000);
     }
