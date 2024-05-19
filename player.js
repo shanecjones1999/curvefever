@@ -128,7 +128,7 @@ class Player {
         const color = this.hasReverseControls() ? "cyan" : this.color,
             size = this.getSize();
         
-        this.trail.draw(this.ctx, size, this.color);
+        this.trail.draw(this.ctx, this.color);
         this.ctx.beginPath();
         this.ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
         this.ctx.fillStyle = color;

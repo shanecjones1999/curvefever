@@ -8,7 +8,6 @@ const colors = ["red", "green", "purple", "blue", "orange", "yellow"];
 
 modal.style.display = 'block';
 
-// Add Player button click handler
 addPlayerButton.addEventListener('click', function() {
     if (players.length < 6) {
         const playerId = players.length + 1,

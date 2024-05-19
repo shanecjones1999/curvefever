@@ -40,7 +40,7 @@ class TrailSegment {
         return this.points[this.points.length - 1];
     }
 
-    draw(ctx, size, color) {
+    draw(ctx, color) {
         if (this.points.length < 2) {
             return;
         }
