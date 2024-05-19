@@ -9,6 +9,12 @@ class Game {
     }
     
     draw() {
+        if (this.powerUpsEnabled) {
+            this.generatePowerUps();
+            this.displayPowerUps();
+            this.detectPowerUpCollisons()
+        }
+
         for (let i = 0; i < this.players.length; i++) {
             this.players[i].draw();
 
@@ -18,12 +24,6 @@ class Game {
         }
 
         this.detectCollisions();
-
-        if (this.powerUpsEnabled) {
-            this.generatePowerUps();
-            this.displayPowerUps();
-            this.detectPowerUpCollisons()
-        }
     }
 
     reset() {
@@ -118,13 +118,13 @@ class Game {
     generatePowerUps() {
         const shouldGenerate = Math.floor(Math.random() * 250) == 1;
         if (shouldGenerate) {
-            const powerUpToGenerate = Math.floor(Math.random() * 13),
+            const powerUpToGenerate = Math.floor(Math.random() * 14),
                 x = Math.floor(Math.random() * CANVAS_WIDTH),
                 y = Math.floor(Math.random() * CANVAS_HEIGHT);
 
             let powerUp = undefined;
 
-            switch (powerUpToGenerate) {
+            switch (7) {
                 case 0:
                     powerUp = new SpeedUp(x, y, gameIndex, this.players, "green", "Speed", false);
                     this.powerUps.push(powerUp);
@@ -142,39 +142,48 @@ class Game {
                     this.powerUps.push(powerUp);
                     break;
                 case 4:
-                    powerUp = new BoardClear(x, y, gameIndex, this.players, "blue", "Clear");
+                    powerUp = new Reverse(x, y, gameIndex, this.players, "red", "Reverse", true);
                     this.powerUps.push(powerUp);
                     break;
                 case 5:
-                    powerUp = new Reverse(x, y, gameIndex, this.players, "red", "Reverse");
-                    this.powerUps.push(powerUp);
-                    break;
-                case 6:
                     powerUp = new SharpTurns(x, y, gameIndex, this.players, "green", "Square", false);
                     this.powerUps.push(powerUp);
                     break;
-                case 7:
+                case 6:
                     powerUp = new SharpTurns(x, y, gameIndex, this.players, "red", "Square", true);
                     this.powerUps.push(powerUp);
                     break;
-                case 8:
+                case 7:
                     powerUp = new ThickLine(x, y, gameIndex, this.players, "green", "Thick", false);
                     this.powerUps.push(powerUp);
                     break;
-                case 9:
+                case 8:
                     powerUp = new ThickLine(x, y, gameIndex, this.players, "red", "Thick", true);
                     this.powerUps.push(powerUp);
                     break;
-                case 10:
+                case 9:
                     powerUp = new ThinLine(x, y, gameIndex, this.players, "green", "Thin", false);
                     this.powerUps.push(powerUp);
                     break;
-                case 11:
+                case 10:
                     powerUp = new ThinLine(x, y, gameIndex, this.players, "red", "Thin", true);
                     this.powerUps.push(powerUp);
                     break;
-                case 12:
+                case 11:
                     powerUp = new Float(x, y, gameIndex, this.players, "green", "Float");
+                    this.powerUps.push(powerUp);
+                    break;
+                case 12:
+                    powerUp = new WallPass(x, y, gameIndex, this.players, "green", "WallPass", false);
+                    this.powerUps.push(powerUp);
+                    break;
+                case 13:
+                    powerUp = new WallPass(x, y, gameIndex, this.players, "blue", "Wall Pass", true);
+                    this.powerUps.push(powerUp);
+                    break;
+                // TODO: Address board clear later
+                case 4:
+                    powerUp = new BoardClear(x, y, gameIndex, this.players, "blue", "Clear");
                     this.powerUps.push(powerUp);
                     break;
                 default:
@@ -198,10 +207,8 @@ class Game {
             for (let j = 0; j < this.powerUps.length; j++) {
                 if (!this.players[i].eliminated && 
                     this.areCirclesOverlapping(this.players[i].x, this.players[i].y, this.powerUps[j].x, this.powerUps[j].y, playerRadius + this.powerUps[j].radius)) {
-                        // apply powerup
                         this.powerUps[j].apply(this.players[i].id);
 
-                        // remove it from game
                         this.removePowerUp(this.powerUps[j].id);
                     }
             }

@@ -22,8 +22,68 @@ class Player {
         this.hasTrail = false;
         this.eliminated = false;
         this.score = 0;
-        this.hasSharpTurns = false;
-        this.hasFloatPowerUp = false;
+        this.canPassWalls = false;
+        this.powerUps = this.initializePowerUps();
+    }
+
+    initializePowerUps() {
+        const powerUpDictionary = {};
+
+        for (const key in PowerUpType) {
+            powerUpDictionary[PowerUpType[key]] = [];
+            
+        }
+
+        return powerUpDictionary;
+    }
+
+    decrementPowerUpDurations() {
+        for (const value in PowerUpType) {
+            const key = PowerUpType[value];
+            if (this.powerUps[key].length > 0) {
+                this.powerUps[key][0] -= 1;
+                if (this.powerUps[key][0] == 0) {
+                    this.powerUps[key].shift();
+                }
+            }
+        }
+    }
+
+    addPowerUp(type) {
+        const powerUpDuration = 250;
+        this.powerUps[type].push(powerUpDuration);
+    }
+
+    speedUpMultiplier() {
+        return Math.pow(2, this.powerUps[PowerUpType.SpeedUp].length);
+    }
+
+    getSpeed() {
+        return this.speed * this.speedUpMultiplier() / this.slowDownMultiplier();
+    }
+
+    slowDownMultiplier() {
+        return Math.pow(2, this.powerUps[PowerUpType.SlowDown].length);
+    }
+
+    thickLineMultiplier() {
+        return Math.pow(2, this.powerUps[PowerUpType.ThickLine].length);
+    }
+
+    thinLineMultiplier() {
+        return Math.pow(2, this.powerUps[PowerUpType.ThinLine].length);
+    }
+
+    getSize() {
+        return this.size * this.thickLineMultiplier() / this.thinLineMultiplier();
+    }
+
+    hasReverseControls() {
+        return this.powerUps[PowerUpType.Reverse].length > 0;
+    }
+
+    hasFloatPowerUp() {
+        return this.powerUps[PowerUpType.Float].length > 0;
     }
 
     setKeys(left, right) {
@@ -66,11 +126,13 @@ class Player {
         if (gameIndex < immuneLength / 2) {
             this.drawArrow();
         }
+        const color = this.hasReverseControls() ? "cyan" : this.color,
+            size = this.getSize();
         
-        this.trail.draw(this.ctx, this.size, this.color);
+        this.trail.draw(this.ctx, size, this.color);
         this.ctx.beginPath();
-        this.ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        this.ctx.fillStyle = this.color;
+        this.ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
+        this.ctx.fillStyle = color;
         this.ctx.fill();
         this.ctx.closePath();
     }
@@ -88,19 +150,9 @@ class Player {
         this.turningSpeed = 0.045;
         this.speed = 2;
         this.size = playerRadius;
-        this.hasFloatPowerUp = false;
-    }
+        this.canPassWalls = false;
 
-    toggleSharpTurns() {
-        this.hasSharpTurns = !this.hasSharpTurns;
-    }
-
-    toggleThickLine() {
-        this.size *= 2;
-    }
-
-    toggleThinLine() {
-        this.size /= 2;
+        this.powerUps = this.initializePowerUps();
     }
 
     reverseControls() {
@@ -119,7 +171,7 @@ class Player {
             arrowLength = 20,
             arrowToPlayerDistance = 50;
 
-        this.ctx.save(); // Save the current canvas state
+        this.ctx.save();
     
         const arrowTipX = this.x + arrowToPlayerDistance * Math.cos(this.playerAngle);
         const arrowTipY = this.y + arrowToPlayerDistance * Math.sin(this.playerAngle);
@@ -140,48 +192,77 @@ class Player {
     }
 
     move() {
-        const angleIncrement = this.hasSharpTurns ? Math.PI / 2 : this.turningSpeed;
+        const angleIncrement = this.turningSpeed;
 
-        if (this.leftPressed) {
+        const speed = this.getSpeed(),
+            size = this.getSize(),
+            leftPressed = this.hasReverseControls() ? this.rightPressed : this.leftPressed,
+            rightPressed = this.hasReverseControls() ? this.leftPressed : this.rightPressed;
+
+        if (leftPressed) {
             this.playerAngle -= angleIncrement;
-        } else if (this.rightPressed) {
+        } else if (rightPressed) {
             this.playerAngle += angleIncrement;
         }
 
-        if (this.hasSharpTurns) {
-            this.leftPressed = false;
-            this.rightPressed = false;
+        if (this.canPassWalls) {
+            this.setPosition();
         }
 
         if (gameIndex == immuneLength) {
             this.hasTrail = true;
         }
 
-        this.x += this.speed * Math.cos(this.playerAngle);
-        this.y += this.speed * Math.sin(this.playerAngle);
+        this.x += speed * Math.cos(this.playerAngle);
+        this.y += speed * Math.sin(this.playerAngle);
 
         if (this.shouldSkip()) {
             this.hasTrail = false;
             this.lastTrailSkip = gameIndex;
         }
 
-        if (!this.hasFloatPowerUp && !this.hasTrail && gameIndex > immuneLength) {
+        if (!this.hasFloatPowerUp() && !this.hasTrail && gameIndex > immuneLength) {
             const dist = this.distanceFromHeadToRecentTrail();
-            if (dist >= this.size * 6) {
+            if (dist >= size * 6) {
                 this.trail.createSegment();
                 this.hasTrail = true;
             }
             //this.trail.createSegment();
         }
         
-        if (gameIndex >= immuneLength && this.hasTrail) {
-            const trailPoint = new TrailPoint(this.x, this.y, ctx, this.size, gameIndex, this.color);
+        if (gameIndex >= immuneLength && this.hasTrail && !this.hasFloatPowerUp()) {
+            const trailPoint = new TrailPoint(this.x, this.y, ctx, size, gameIndex, this.color);
             this.trail.addPoint(trailPoint);
+        }
+
+        this.decrementPowerUpDurations();
+    }
+
+    setPosition() {
+        if (this.x < 0) {
+            this.x = CANVAS_WIDTH;
+            this.trail.createSegment();
+        } else if (this.x > CANVAS_WIDTH) {
+            this.x = 0;
+            this.trail.createSegment();
+        }
+
+        if (this.y < 0) {
+            this.y = CANVAS_HEIGHT;
+            this.trail.createSegment();
+        } else if (this.y > CANVAS_HEIGHT) {
+            this.y = 0;
+            this.trail.createSegment();
         }
     }
 
     distanceFromHeadToRecentTrail() {
         const lastPoint = this.trail.lastSegment().lastPoint();
+        
+        if (!lastPoint) {
+            return Number.MAX_SAFE_INTEGER;
+        }
+
         return this.distanceBetweenPoints(this.x, this.y, lastPoint.x, lastPoint.y);
 
     }
@@ -199,7 +280,7 @@ class Player {
     }
 
     isOutOfBounds() {
-        if (!this.hasTrail) {
+        if (!this.hasFloatPowerUp() || !this.hasTrail || this.canPassWalls) {
             return false;
         }
         const OOB = playerRadius/2 + 1;
