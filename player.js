@@ -22,7 +22,6 @@ class Player {
         this.hasTrail = false;
         this.eliminated = false;
         this.score = 0;
-        this.canPassWalls = false;
         this.powerUps = this.initializePowerUps();
     }
 
@@ -150,7 +149,6 @@ class Player {
         this.turningSpeed = 0.045;
         this.speed = 2;
         this.size = playerRadius;
-        this.canPassWalls = false;
 
         this.powerUps = this.initializePowerUps();
     }
@@ -205,10 +203,6 @@ class Player {
             this.playerAngle += angleIncrement;
         }
 
-        if (this.canPassWalls) {
-            this.setPosition();
-        }
-
         if (gameIndex == immuneLength) {
             this.hasTrail = true;
         }
@@ -227,7 +221,6 @@ class Player {
                 this.trail.createSegment();
                 this.hasTrail = true;
             }
-            //this.trail.createSegment();
         }
         
         if (gameIndex >= immuneLength && this.hasTrail && !this.hasFloatPowerUp()) {
@@ -236,24 +229,6 @@ class Player {
         }
 
         this.decrementPowerUpDurations();
-    }
-
-    setPosition() {
-        if (this.x < 0) {
-            this.x = CANVAS_WIDTH;
-            this.trail.createSegment();
-        } else if (this.x > CANVAS_WIDTH) {
-            this.x = 0;
-            this.trail.createSegment();
-        }
-
-        if (this.y < 0) {
-            this.y = CANVAS_HEIGHT;
-            this.trail.createSegment();
-        } else if (this.y > CANVAS_HEIGHT) {
-            this.y = 0;
-            this.trail.createSegment();
-        }
     }
 
     distanceFromHeadToRecentTrail() {
@@ -280,7 +255,7 @@ class Player {
     }
 
     isOutOfBounds() {
-        if (!this.hasFloatPowerUp() || !this.hasTrail || this.canPassWalls) {
+        if (this.hasFloatPowerUp() || !this.hasTrail) {
             return false;
         }
         const OOB = playerRadius/2 + 1;

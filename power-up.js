@@ -20,6 +20,7 @@ const PowerUpType = {
     ThinLine: 5,
     Float: 6,
     WallPass: 7,
+    Clear: 8,
 }
 
 class PowerUp {
@@ -33,7 +34,6 @@ class PowerUp {
         this.text = text;
         this.applyToOthers = others;
         this.radius = 40;
-        this.duration = 3000;
     }
 
     draw() {
@@ -84,8 +84,8 @@ class SlowDown extends PowerUp {
 }
 
 class BoardClear extends PowerUp {
-    constructor(x, y, id, players, color, text) {
-        super(x, y, id, players, color, text);
+    constructor(x, y, id, players, color, text, others) {
+        super(x, y, id, PowerUpType.Clear, players, color, text, others);
     }
 
     apply(_) {
@@ -181,9 +181,8 @@ class PowerUpFactory {
             case 13:
                 powerUp = new WallPass(x, y, gameIndex, players, "blue", "Wall Pass", true);
                 break;
-            // TODO: Address board clear later
-            case 4:
-                powerUp = new BoardClear(x, y, gameIndex, players, "blue", "Clear");
+            case 14:
+                powerUp = new BoardClear(x, y, gameIndex, players, "blue", "Clear", false);
                 break;
             default:
                 console.error("Invalid power-up to generate");
