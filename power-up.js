@@ -130,3 +130,65 @@ class WallPass extends PowerUp {
         super(x, y, id, PowerUpType.WallPass, players, color, text, others);
     }
 }
+
+class PowerUpFactory {
+    static Create(type, players) {
+        let powerUp = undefined;
+
+        const x = Math.floor(Math.random() * CANVAS_WIDTH),
+            y = Math.floor(Math.random() * CANVAS_HEIGHT);
+
+        switch (type) {
+            case 0:
+                powerUp = new SpeedUp(x, y, gameIndex, players, "green", "Speed", false);
+                break;
+            case 1:
+                powerUp = new SpeedUp(x, y, gameIndex, players, "red", "Speed", true);
+                break;
+            case 2:
+                powerUp = new SlowDown(x, y, gameIndex, players, "green", "Slow", false);
+                break;
+            case 3:
+                powerUp = new SlowDown(x, y, gameIndex, players, "red", "Slow", true);
+                break;
+            case 4:
+                powerUp = new Reverse(x, y, gameIndex, players, "red", "Reverse", true);
+                break;
+            case 5:
+                powerUp = new SharpTurns(x, y, gameIndex, players, "green", "Square", false);
+                break;
+            case 6:
+                powerUp = new SharpTurns(x, y, gameIndex, players, "red", "Square", true);
+                break;
+            case 7:
+                powerUp = new ThickLine(x, y, gameIndex, players, "green", "Thick", false);
+                break;
+            case 8:
+                powerUp = new ThickLine(x, y, gameIndex, players, "red", "Thick", true);
+                break;
+            case 9:
+                powerUp = new ThinLine(x, y, gameIndex, players, "green", "Thin", false);
+                break;
+            case 10:
+                powerUp = new ThinLine(x, y, gameIndex, players, "red", "Thin", true);
+                break;
+            case 11:
+                powerUp = new Float(x, y, gameIndex, players, "green", "Float");
+                break;
+            case 12:
+                powerUp = new WallPass(x, y, gameIndex, players, "green", "WallPass", false);
+                break;
+            case 13:
+                powerUp = new WallPass(x, y, gameIndex, players, "blue", "Wall Pass", true);
+                break;
+            // TODO: Address board clear later
+            case 4:
+                powerUp = new BoardClear(x, y, gameIndex, players, "blue", "Clear");
+                break;
+            default:
+                console.error("Invalid power-up to generate");
+        }
+
+        return powerUp;
+    }
+}

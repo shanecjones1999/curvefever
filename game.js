@@ -118,77 +118,81 @@ class Game {
     generatePowerUps() {
         const shouldGenerate = Math.floor(Math.random() * 250) == 1;
         if (shouldGenerate) {
-            const powerUpToGenerate = Math.floor(Math.random() * 14),
-                x = Math.floor(Math.random() * CANVAS_WIDTH),
-                y = Math.floor(Math.random() * CANVAS_HEIGHT);
 
-            let powerUp = undefined;
+            const powerUp = PowerUpFactory.Create(0, this.players);
 
-            switch (7) {
-                case 0:
-                    powerUp = new SpeedUp(x, y, gameIndex, this.players, "green", "Speed", false);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 1:
-                    powerUp = new SpeedUp(x, y, gameIndex, this.players, "red", "Speed", true);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 2:
-                    powerUp = new SlowDown(x, y, gameIndex, this.players, "green", "Slow", false);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 3:
-                    powerUp = new SlowDown(x, y, gameIndex, this.players, "red", "Slow", true);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 4:
-                    powerUp = new Reverse(x, y, gameIndex, this.players, "red", "Reverse", true);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 5:
-                    powerUp = new SharpTurns(x, y, gameIndex, this.players, "green", "Square", false);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 6:
-                    powerUp = new SharpTurns(x, y, gameIndex, this.players, "red", "Square", true);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 7:
-                    powerUp = new ThickLine(x, y, gameIndex, this.players, "green", "Thick", false);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 8:
-                    powerUp = new ThickLine(x, y, gameIndex, this.players, "red", "Thick", true);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 9:
-                    powerUp = new ThinLine(x, y, gameIndex, this.players, "green", "Thin", false);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 10:
-                    powerUp = new ThinLine(x, y, gameIndex, this.players, "red", "Thin", true);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 11:
-                    powerUp = new Float(x, y, gameIndex, this.players, "green", "Float");
-                    this.powerUps.push(powerUp);
-                    break;
-                case 12:
-                    powerUp = new WallPass(x, y, gameIndex, this.players, "green", "WallPass", false);
-                    this.powerUps.push(powerUp);
-                    break;
-                case 13:
-                    powerUp = new WallPass(x, y, gameIndex, this.players, "blue", "Wall Pass", true);
-                    this.powerUps.push(powerUp);
-                    break;
-                // TODO: Address board clear later
-                case 4:
-                    powerUp = new BoardClear(x, y, gameIndex, this.players, "blue", "Clear");
-                    this.powerUps.push(powerUp);
-                    break;
-                default:
-                    console.error("Invalid power-up to generate");
-            }
+            this.powerUps.push(powerUp);
+            // const powerUpToGenerate = Math.floor(Math.random() * 14),
+            //     x = Math.floor(Math.random() * CANVAS_WIDTH),
+            //     y = Math.floor(Math.random() * CANVAS_HEIGHT);
+
+            // let powerUp = undefined;
+
+            // switch (7) {
+            //     case 0:
+            //         powerUp = new SpeedUp(x, y, gameIndex, this.players, "green", "Speed", false);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 1:
+            //         powerUp = new SpeedUp(x, y, gameIndex, this.players, "red", "Speed", true);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 2:
+            //         powerUp = new SlowDown(x, y, gameIndex, this.players, "green", "Slow", false);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 3:
+            //         powerUp = new SlowDown(x, y, gameIndex, this.players, "red", "Slow", true);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 4:
+            //         powerUp = new Reverse(x, y, gameIndex, this.players, "red", "Reverse", true);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 5:
+            //         powerUp = new SharpTurns(x, y, gameIndex, this.players, "green", "Square", false);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 6:
+            //         powerUp = new SharpTurns(x, y, gameIndex, this.players, "red", "Square", true);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 7:
+            //         powerUp = new ThickLine(x, y, gameIndex, this.players, "green", "Thick", false);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 8:
+            //         powerUp = new ThickLine(x, y, gameIndex, this.players, "red", "Thick", true);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 9:
+            //         powerUp = new ThinLine(x, y, gameIndex, this.players, "green", "Thin", false);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 10:
+            //         powerUp = new ThinLine(x, y, gameIndex, this.players, "red", "Thin", true);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 11:
+            //         powerUp = new Float(x, y, gameIndex, this.players, "green", "Float");
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 12:
+            //         powerUp = new WallPass(x, y, gameIndex, this.players, "green", "WallPass", false);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     case 13:
+            //         powerUp = new WallPass(x, y, gameIndex, this.players, "blue", "Wall Pass", true);
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     // TODO: Address board clear later
+            //     case 4:
+            //         powerUp = new BoardClear(x, y, gameIndex, this.players, "blue", "Clear");
+            //         this.powerUps.push(powerUp);
+            //         break;
+            //     default:
+            //         console.error("Invalid power-up to generate");
+            // }
 
             //const powerUp = new SelfSpeedUp(x, y, gameIndex, "green", "Speedy");
             //this.powerUps.push(powerUp);
