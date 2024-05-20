@@ -245,7 +245,7 @@ class Player {
 
         if (!this.hasFloatPowerUp() && !this.hasTrail && gameIndex > immuneLength) {
             const dist = this.distanceFromHeadToRecentTrail();
-            if (dist >= size * 8) {
+            if (dist >= Math.max(size * 8, playerRadius * 8)) {
                 this.trail.createSegment();
                 this.hasTrail = true;
             }
