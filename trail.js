@@ -20,9 +20,9 @@ class Trail {
         this.segments.addSegment(segment);
     }
 
-    draw(ctx, size, color) {
+    draw(ctx, color, sz) {
         for (let i = 0; i < this.segments.length; i++) {
-            this.segments[i].draw(ctx, size, color);
+            this.segments[i].draw(ctx, color, sz);
         }
     }
 }
@@ -40,23 +40,19 @@ class TrailSegment {
         return this.points[this.points.length - 1];
     }
 
-    draw(ctx, color) {
-        if (this.points.length < 2) {
-            return;
+    draw(ctx, color, sz) {
+        for (let i = 0; i < this.points.length; i++) {
+
+            if (!(gameIndex - this.points[i].idx > sz * 2)) {
+                color = "cyan";
+            }
+
+            ctx.beginPath();
+            ctx.arc(this.points[i].x, this.points[i].y, this.points[i].size, 0, Math.PI * 2);
+            ctx.fillStyle = color;
+            ctx.fill();
+            ctx.closePath();
         }
-
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        
-
-        ctx.moveTo(this.points[0].x, this.points[0].y);
-        for (let i = 1; i < this.points.length; i++) {
-            ctx.lineWidth = this.points[i].size * 2;
-            ctx.lineTo(this.points[i].x, this.points[i].y);
-        }
-
-        ctx.stroke();
-        ctx.closePath();
     }
 }
 

@@ -127,8 +127,10 @@ class Player {
         }
         const color = this.hasReverseControls() ? "cyan" : this.color,
             size = this.getSize();
+
         
-        this.trail.draw(this.ctx, this.color);
+        this.trail.draw(this.ctx, this.color, this.getSize() * 2);
+
         this.ctx.beginPath();
         this.ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
         this.ctx.fillStyle = color;
@@ -217,7 +219,7 @@ class Player {
 
         if (!this.hasFloatPowerUp() && !this.hasTrail && gameIndex > immuneLength) {
             const dist = this.distanceFromHeadToRecentTrail();
-            if (dist >= size * 6) {
+            if (dist >= size * 8) {
                 this.trail.createSegment();
                 this.hasTrail = true;
             }
@@ -251,16 +253,16 @@ class Player {
     }
 
     shouldSkip() {
-        return gameIndex > immuneLength && (gameIndex - this.lastTrailSkip) > minTrailGap && Math.floor(Math.random() * 100) == 1;
+        return gameIndex > immuneLength && (gameIndex - this.lastTrailSkip) > (this.getSize() * 6) && Math.floor(Math.random() * 100) == 1;
     }
 
     isOutOfBounds() {
         if (this.hasFloatPowerUp() || !this.hasTrail) {
             return false;
         }
-        const OOB = playerRadius/2 + 1;
+        const margin = this.getSize();
 
-        if (this.x <= 0 + OOB || this.x >= CANVAS_WIDTH - OOB || this.y <= 0 + OOB || this.y >= CANVAS_HEIGHT - OOB) {
+        if (this.x <= 0 + margin || this.x >= CANVAS_WIDTH - margin || this.y <= 0 + margin || this.y >= CANVAS_HEIGHT - margin) {
             return true;
          }
      

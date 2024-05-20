@@ -55,8 +55,7 @@ const canvas = document.getElementById("canvas"),
     CANVAS_WIDTH = canvas.width,
     CANVAS_HEIGHT = canvas.height,
     playerRadius = 4.5,
-    immuneLength = 100,
-    minTrailGap = 30;
+    immuneLength = 100;
 
 let gameIndex = 0,
     game = undefined;
