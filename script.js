@@ -4,9 +4,16 @@ const modal = document.getElementById('addPlayersModal'),
     playerList = document.getElementById('playerList');
 
 let players = [];
-const colors = ["red", "green", "purple", "blue", "orange", "yellow"];
+const colors = ["red", "green", "purple", "blue", "orange", "grey"];
 
 modal.style.display = 'block';
+
+const powerUpCheckbox = document.getElementById('power-up-checkbox');
+let powerUpsEnabled = false;
+
+    powerUpCheckbox.addEventListener('change', (event) => {
+        powerUpsEnabled = event.target.checked;
+    });
 
 addPlayerButton.addEventListener('click', function() {
     if (players.length < 6) {
@@ -83,7 +90,7 @@ function draw() {
   }
 
 function setup() {    
-    game = new Game(players);
+    game = new Game(players, powerUpsEnabled);
     displayScores()
     draw();
 }

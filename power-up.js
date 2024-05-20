@@ -129,6 +129,17 @@ class WallPass extends PowerUp {
     constructor(x, y, id, players, color, text, others) {
         super(x, y, id, PowerUpType.WallPass, players, color, text, others);
     }
+
+    apply(sourceId) {
+        if (!this.applyToOthers) {
+            super.apply(sourceId);
+            return;
+        }
+
+        for (let i = 0; i < this.players.length; i++) {
+            this.players[i].addPowerUp(this.type);
+        }
+    }
 }
 
 class PowerUpFactory {

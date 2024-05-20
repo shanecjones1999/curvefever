@@ -1,10 +1,10 @@
 class Game {
-    constructor(players) {
+    constructor(players, powerUpsEnabled) {
         this.round = 1;
         this.totalRounds = 10;
         this.players = players
         this.score = new Score();
-        this.powerUpsEnabled = true;
+        this.powerUpsEnabled = powerUpsEnabled;
         this.powerUps = [];
     }
     
@@ -109,18 +109,15 @@ class Game {
         const dx = x2 - x1,
             dy = y2 - y1,
             distance = Math.sqrt(dx * dx + dy * dy);
-    
-        // TODO
-        // Investigate this, currently a hacked constant but may not be ideal
         return distance <= radius;
     }
 
     generatePowerUps() {
-        const shouldGenerate = Math.floor(Math.random() * 100) == 1;
+        const shouldGenerate = Math.floor(Math.random() * 300) == 1;
         if (shouldGenerate) {
 
-            const type =  Math.floor(Math.random() * 14),
-                powerUp = PowerUpFactory.Create(7, this.players);
+            const type =  Math.floor(Math.random() * 15),
+                powerUp = PowerUpFactory.Create(type, this.players);
 
             if (powerUp) {
                 this.powerUps.push(powerUp);

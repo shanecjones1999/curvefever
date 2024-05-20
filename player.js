@@ -41,7 +41,7 @@ class Player {
             const key = PowerUpType[value];
             if (this.powerUps[key].length > 0) {
                 this.powerUps[key][0] -= 1;
-                if (this.powerUps[key][0] == 0) {
+                if (this.powerUps[key][0] <= 0) {
                     this.powerUps[key].shift();
                 }
             }
@@ -85,6 +85,18 @@ class Player {
         return this.powerUps[PowerUpType.Float].length > 0;
     }
 
+    hasSharpTurns() {
+        return this.powerUps[PowerUpType.SharpTurns].length > 0;
+    }
+
+    getAngle() {
+        return this.hasSharpTurns() ? Math.PI / 2: this.turningSpeed;
+    }
+
+    canPassWalls() {
+        return this.powerUps[PowerUpType.WallPass].length > 0;
+    }
+
     setKeys(left, right) {
         this.leftKey = left;
         this.rightKey = right;
@@ -125,11 +137,17 @@ class Player {
         if (gameIndex < immuneLength / 2) {
             this.drawArrow();
         }
-        const color = this.hasReverseControls() ? "cyan" : this.color,
+        let color = this.hasReverseControls() ? "cyan" : this.color,
             size = this.getSize();
 
         
-        this.trail.draw(this.ctx, this.color, this.getSize() * 2);
+        this.trail.draw(this.ctx, this.color, size * 2);
+
+        if (this.canPassWalls()) {
+            if (Math.floor(gameIndex / 25) % 2 == 0) {
+                color = "yellow";
+            }
+        }
 
         this.ctx.beginPath();
         this.ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
@@ -192,9 +210,8 @@ class Player {
     }
 
     move() {
-        const angleIncrement = this.turningSpeed;
-
         const speed = this.getSpeed(),
+            angleIncrement = this.getAngle(),
             size = this.getSize(),
             leftPressed = this.hasReverseControls() ? this.rightPressed : this.leftPressed,
             rightPressed = this.hasReverseControls() ? this.leftPressed : this.rightPressed;
@@ -205,12 +222,21 @@ class Player {
             this.playerAngle += angleIncrement;
         }
 
+        if (this.hasSharpTurns()) {
+            this.leftPressed = false;
+            this.rightPressed = false;
+        }
+
         if (gameIndex == immuneLength) {
             this.hasTrail = true;
         }
 
         this.x += speed * Math.cos(this.playerAngle);
         this.y += speed * Math.sin(this.playerAngle);
+
+        if (this.canPassWalls()) {
+            this.setPosition();
+        }
 
         if (this.shouldSkip()) {
             this.hasTrail = false;
@@ -229,6 +255,7 @@ class Player {
             const trailPoint = new TrailPoint(this.x, this.y, ctx, size, gameIndex, this.color);
             this.trail.addPoint(trailPoint);
         }
+
 
         this.decrementPowerUpDurations();
     }
@@ -257,7 +284,7 @@ class Player {
     }
 
     isOutOfBounds() {
-        if (this.hasFloatPowerUp() || !this.hasTrail) {
+        if (this.hasFloatPowerUp() || this.canPassWalls() || !this.hasTrail) {
             return false;
         }
         const margin = this.getSize();
@@ -267,5 +294,20 @@ class Player {
          }
      
          return false;
+    }
+
+    // Utility method if player can pass through walls.
+    setPosition() {
+        if (this.x < 0) {
+            this.x = CANVAS_WIDTH;
+        } else if (this.x > CANVAS_WIDTH) {
+            this.x = 0;
+        }
+
+        if (this.y < 0) {
+            this.y = CANVAS_HEIGHT;
+        } else if (this.y > CANVAS_HEIGHT) {
+            this.y = 0;
+        }
     }
 }
