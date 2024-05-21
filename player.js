@@ -93,8 +93,8 @@ class Player {
         return this.hasSharpTurns() ? Math.PI / 2: this.turningSpeed;
     }
 
-    canPassWalls() {
-        return this.powerUps[PowerUpType.WallPass].length > 0;
+    canWrap() {
+        return this.powerUps[PowerUpType.Wrap].length > 0;
     }
 
     setKeys(left, right) {
@@ -143,7 +143,7 @@ class Player {
         
         this.trail.draw(this.ctx, this.color);
 
-        if (this.canPassWalls()) {
+        if (this.canWrap()) {
             if (Math.floor(gameIndex / 25) % 2 == 0) {
                 color = "yellow";
             }
@@ -159,6 +159,10 @@ class Player {
     }
 
     isOverlappingPoint(point) {
+        if (!this.hasTrail || this.hasFloatPowerUp()) {
+            return false;
+        }
+
         const viewAngle = Math.PI,
             viewDistance = this.getSize() + point.size;
 
@@ -286,7 +290,7 @@ class Player {
         this.x += speed * Math.cos(this.playerAngle);
         this.y += speed * Math.sin(this.playerAngle);
 
-        if (this.canPassWalls()) {
+        if (this.canWrap()) {
             this.setPosition();
         }
 
@@ -336,7 +340,7 @@ class Player {
     }
 
     isOutOfBounds() {
-        if (this.hasFloatPowerUp() || this.canPassWalls() || !this.hasTrail) {
+        if (this.hasFloatPowerUp() || this.canWrap() || !this.hasTrail) {
             return false;
         }
         const margin = this.getSize();

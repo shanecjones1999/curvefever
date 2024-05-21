@@ -89,7 +89,7 @@ class Game {
                 for (let k = 0; k < segments.length; k++) {
                     const points = segments[k].points;
                     for (let l = 0; l < points.length; l ++) {
-                        if (this.players[i].hasTrail && this.players[i].isOverlappingPoint(points[l])) {
+                        if (this.players[i].isOverlappingPoint(points[l])) {
                             this.eliminatePlayer(this.players[i]);
                         }
                     }

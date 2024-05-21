@@ -19,7 +19,7 @@ const PowerUpType = {
     ThickLine: 4,
     ThinLine: 5,
     Float: 6,
-    WallPass: 7,
+    Wrap: 7,
     Clear: 8,
 }
 
@@ -125,9 +125,9 @@ class Float extends PowerUp {
     }
 }
 
-class WallPass extends PowerUp {
+class Wrap extends PowerUp {
     constructor(x, y, id, players, color, text, others) {
-        super(x, y, id, PowerUpType.WallPass, players, color, text, others);
+        super(x, y, id, PowerUpType.Wrap, players, color, text, others);
     }
 
     apply(sourceId) {
@@ -187,10 +187,10 @@ class PowerUpFactory {
                 powerUp = new Float(x, y, gameIndex, players, "green", "Float");
                 break;
             case 12:
-                powerUp = new WallPass(x, y, gameIndex, players, "green", "WallPass", false);
+                powerUp = new Wrap(x, y, gameIndex, players, "green", "Wrap", false);
                 break;
             case 13:
-                powerUp = new WallPass(x, y, gameIndex, players, "blue", "Wall Pass", true);
+                powerUp = new Wrap(x, y, gameIndex, players, "blue", "Wrap", true);
                 break;
             case 14:
                 powerUp = new BoardClear(x, y, gameIndex, players, "blue", "Clear", false);
