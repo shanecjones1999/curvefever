@@ -4,6 +4,12 @@ class Trail {
     }
 
     addPoint(point) {
+        const lastPoint = this.lastSegment().lastPoint();
+        if (lastPoint && lastPoint.size != point.size) {
+            this.createSegment();
+            point.x = lastPoint.x;
+            point.y = lastPoint.y;
+        }
         this.segments[this.segments.length - 1].addPoint(point);
     }
 
