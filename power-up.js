@@ -1,13 +1,3 @@
-// Speed
-// Slow self/others
-// Clear board
-// Reverse other controls
-// Square turns self/others
-
-// Free float over lines
-// Pass through wall self/all
-// Line width self/others
-
 // Spawn more powerups
 // Mystery
 

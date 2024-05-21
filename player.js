@@ -39,12 +39,10 @@ class Player {
     decrementPowerUpDurations() {
         for (const value in PowerUpType) {
             const key = PowerUpType[value];
-            if (this.powerUps[key].length > 0) {
-                this.powerUps[key][0] -= 1;
-                if (this.powerUps[key][0] <= 0) {
-                    this.powerUps[key].shift();
-                }
+            for (let i = 0; i < this.powerUps[key].length; i++) {
+                this.powerUps[key][i] -= 1;
             }
+            this.powerUps[key] = this.powerUps[key].filter(p => p > 0);
         }
     }
 
@@ -90,7 +88,11 @@ class Player {
     }
 
     getAngle() {
-        return this.hasSharpTurns() ? Math.PI / 2: this.turningSpeed;
+        if (this.hasSharpTurns()) {
+            return Math.PI;
+        }
+
+        return this.turningSpeed; // * this.speedUpMultiplier() 
     }
 
     canWrap() {
@@ -143,19 +145,24 @@ class Player {
         
         this.trail.draw(this.ctx, this.color);
 
-        if (this.canWrap()) {
-            if (Math.floor(gameIndex / 25) % 2 == 0) {
-                color = "yellow";
-            }
-        }
-
         this.ctx.beginPath();
         this.ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
         this.ctx.fillStyle = color;
         this.ctx.fill();
+
+        if (this.canWrap()) {
+            this.giveYellowBorder();
+        }
+
         this.ctx.closePath();
 
         this.highlightFrontArea();
+    }
+
+    giveYellowBorder() {
+        this.ctx.lineWidth = 2;
+        this.ctx.strokeStyle = "yellow";
+        this.ctx.stroke();
     }
 
     isOverlappingPoint(point) {
