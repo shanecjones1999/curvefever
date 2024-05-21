@@ -117,7 +117,7 @@ class Game {
         if (shouldGenerate) {
 
             const type =  Math.floor(Math.random() * 15),
-                powerUp = PowerUpFactory.Create(9, this.players);
+                powerUp = PowerUpFactory.Create(7, this.players);
 
             if (powerUp) {
                 this.powerUps.push(powerUp);

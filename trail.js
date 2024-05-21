@@ -41,18 +41,39 @@ class TrailSegment {
     }
 
     draw(ctx, color, sz) {
-        for (let i = 0; i < this.points.length; i++) {
-
-            if (!(gameIndex - this.points[i].idx > sz * 2)) {
-                color = "cyan";
-            }
-
-            ctx.beginPath();
-            ctx.arc(this.points[i].x, this.points[i].y, this.points[i].size, 0, Math.PI * 2);
-            ctx.fillStyle = color;
-            ctx.fill();
-            ctx.closePath();
+        if (this.points.length < 2) {
+            return;
         }
+
+        // LINES
+
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+
+        ctx.moveTo(this.points[0].x, this.points[0].y);
+        
+        for (let i = 1; i < this.points.length; i++) {
+            ctx.lineWidth = this.points[i].size * 2;
+            ctx.lineTo(this.points[i].x, this.points[i].y);
+        }
+
+        ctx.stroke();
+        ctx.closePath();
+
+        // CIRCLES
+
+        // for (let i = 0; i < this.points.length; i++) {
+
+        //     if (!(gameIndex - this.points[i].idx > sz * 2)) {
+        //         color = "cyan";
+        //     }
+
+        //     ctx.beginPath();
+        //     ctx.arc(this.points[i].x, this.points[i].y, this.points[i].size, 0, Math.PI * 2);
+        //     ctx.fillStyle = color;
+        //     ctx.fill();
+        //     ctx.closePath();
+        // }
     }
 }
 

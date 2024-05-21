@@ -300,14 +300,18 @@ class Player {
     setPosition() {
         if (this.x < 0) {
             this.x = CANVAS_WIDTH;
+            this.trail.createSegment();
         } else if (this.x > CANVAS_WIDTH) {
             this.x = 0;
+            this.trail.createSegment();
         }
 
         if (this.y < 0) {
             this.y = CANVAS_HEIGHT;
+            this.trail.createSegment();
         } else if (this.y > CANVAS_HEIGHT) {
             this.y = 0;
+            this.trail.createSegment();
         }
     }
 }
