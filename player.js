@@ -141,7 +141,7 @@ class Player {
             size = this.getSize();
 
         
-        this.trail.draw(this.ctx, this.color, size * 2);
+        this.trail.draw(this.ctx, this.color);
 
         if (this.canPassWalls()) {
             if (Math.floor(gameIndex / 25) % 2 == 0) {
@@ -154,6 +154,58 @@ class Player {
         this.ctx.fillStyle = color;
         this.ctx.fill();
         this.ctx.closePath();
+
+        this.highlightFrontArea();
+    }
+
+    isOverlappingPoint(point) {
+        const viewAngle = Math.PI,
+            viewDistance = this.getSize() + point.size;
+
+        // Calculate the vector from the player to the point
+        const vectorX = point.x - this.x;
+        const vectorY = point.y - this.y;
+
+        // Calculate the distance from the this to the point
+        const distance = Math.sqrt(vectorX * vectorX + vectorY * vectorY);
+
+        // Check if the point is within the view distance
+        if (distance > viewDistance) {
+            return false;
+        }
+
+        // Normalize the vector
+        const normalizedVectorX = vectorX / distance;
+        const normalizedVectorY = vectorY / distance;
+
+        // Calculate the this's direction vector
+        const directionX = Math.cos(this.playerAngle);
+        const directionY = Math.sin(this.playerAngle);
+
+        // Calculate the dot product between the direction and the vector to the point
+        const dotProduct = normalizedVectorX * directionX + normalizedVectorY * directionY;
+
+        // Calculate the angle between the direction and the vector to the point
+        const angle = Math.acos(dotProduct);
+
+        // Check if the angle is within half the view angle
+        return angle <= (viewAngle / 2);
+    }
+
+    highlightFrontArea() {
+        const viewAngle = Math.PI;
+        const startAngle = this.playerAngle - viewAngle / 2;
+        const endAngle = this.playerAngle + viewAngle / 2;
+
+        const viewDistance = this.getSize();
+    
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.arc(this.x, this.y, viewDistance, startAngle, endAngle);
+        ctx.lineTo(this.x, this.y);
+        ctx.fillStyle = 'rgba(255, 255, 0, 0.5)';
+        ctx.fill();
+        ctx.closePath();
     }
 
     reset() {

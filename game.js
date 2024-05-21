@@ -76,33 +76,26 @@ class Game {
     
     detectCollisions() {
         for (let i = 0; i < this.players.length; i++) {
+            if (this.players[i].eliminated) {
+                continue;
+            }
+
             if (this.players[i].isOutOfBounds()) {
                 this.eliminatePlayer(this.players[i]);
+                continue;
             }
             for (let j = 0; j < this.players.length; j++) {
                 const segments = this.players[j].trail.segments;
                 for (let k = 0; k < segments.length; k++) {
                     const points = segments[k].points;
                     for (let l = 0; l < points.length; l ++) {
-                        if (this.players[i].hasTrail && this.isValidTrailPoint(points[l], this.players[i].getSize(), i == j) 
-                        && this.areCirclesOverlapping(this.players[i].x, this.players[i].y, points[l].x, points[l].y, this.players[i].getSize() + points[l].size)) {
+                        if (this.players[i].hasTrail && this.players[i].isOverlappingPoint(points[l])) {
                             this.eliminatePlayer(this.players[i]);
-                    }
+                        }
                     }
                 }
             }
         }
-    
-        return false;
-    }
-    
-    isValidTrailPoint(point, playerSize, self) {
-        if (!self) {
-            return true;
-        }
-    
-        // TODO: Adjust. We do not want to look for a collision if this is our trail within ~ playerSize() 2 pixels
-        return gameIndex - point.idx > playerSize * 2;
     }
     
     areCirclesOverlapping(x1, y1, x2, y2, radius) {
@@ -113,11 +106,11 @@ class Game {
     }
 
     generatePowerUps() {
-        const shouldGenerate = Math.floor(Math.random() * 200) == 1;
+        const shouldGenerate = Math.floor(Math.random() * 600) == 1;
         if (shouldGenerate) {
 
             const type =  Math.floor(Math.random() * 15),
-                powerUp = PowerUpFactory.Create(7, this.players);
+                powerUp = PowerUpFactory.Create(type, this.players);
 
             if (powerUp) {
                 this.powerUps.push(powerUp);
