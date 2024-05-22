@@ -102,7 +102,7 @@ class Game {
                 for (let k = 0; k < segments.length; k++) {
                     const points = segments[k].points;
                     for (let l = 1; l < points.length; l++) {
-                        if (this.players[i].isCircleIntersectingLineWithDirection(points[l-1], points[l])) {
+                        if (this.players[i].isCircleIntersectingSegment(points[l-1], points[l])) {
                             this.eliminatePlayer(this.players[i]);
                         }
                     }
@@ -119,11 +119,11 @@ class Game {
     }
 
     generatePowerUps() {
-        const shouldGenerate = Math.floor(Math.random() * 100) == 1;
+        const shouldGenerate = Math.floor(Math.random() * 600) == 1;
         if (shouldGenerate) {
 
             const type =  Math.floor(Math.random() * 15),
-                powerUp = PowerUpFactory.Create(type, this.players);
+                powerUp = PowerUpFactory.Create(7, this.players);
 
             if (powerUp) {
                 this.powerUps.push(powerUp);

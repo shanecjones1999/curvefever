@@ -426,4 +426,25 @@ class Player {
     
         return false;
     }
+
+    isCircleIntersectingSegment(point1, point2) {
+        const { x: cx, y: cy } = this;
+        const radius = this.getSize() + point2.size;
+    
+        // Calculate the distance from the player's position to the line segment
+        const lineLength = Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
+        const dotProduct = (((cx - point1.x) * (point2.x - point1.x)) + ((cy - point1.y) * (point2.y - point1.y))) / (lineLength ** 2);
+        const closestX = point1.x + (dotProduct * (point2.x - point1.x));
+        const closestY = point1.y + (dotProduct * (point2.y - point1.y));
+    
+        // Calculate the distance from the circle center to the closest point on the line segment
+        const distanceToClosest = Math.sqrt((closestX - cx) ** 2 + (closestY - cy) ** 2);
+    
+        // Check if the closest point is within the segment bounds
+        const withinSegmentBounds = (closestX >= Math.min(point1.x, point2.x) && closestX <= Math.max(point1.x, point2.x)) &&
+                                    (closestY >= Math.min(point1.y, point2.y) && closestY <= Math.max(point1.y, point2.y));
+    
+        // Check if the circle intersects with the segment
+        return withinSegmentBounds && distanceToClosest <= radius && (this.isOverlappingPoint(point1) || this.isOverlappingPoint(point2));
+    }
 }

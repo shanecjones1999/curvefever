@@ -40,7 +40,7 @@ class PowerUp {
         ctx.fillStyle = this.applyType == ApplyType.Self ? "green" : this.applyType == ApplyType.Others ? "red" : "blue";
         ctx.fill();
 
-        ctx.lineWidth = 5;
+        ctx.lineWidth = 3;
         ctx.strokeStyle = borderColor;
         ctx.stroke();
         ctx.closePath();
