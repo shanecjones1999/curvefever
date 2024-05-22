@@ -2,16 +2,16 @@
 // Mystery
 
 const PowerUpType = {
-    SpeedUp: 0,
-    SlowDown: 1,
-    Reverse: 2,
-    SharpTurns: 3,
-    ThickLine: 4,
-    ThinLine: 5,
-    Float: 6,
-    Wrap: 7,
-    Clear: 8,
-}
+    SpeedUp: { enum: 0, color: 'rgb(67, 143, 66)', colorTransparent: 'rgba(67, 143, 66, 0.75)' },
+    SlowDown: { enum: 1, color: 'rgb(237, 86, 69)', colorTransparent: 'rgba(237, 86, 69, 0.75)' },
+    Reverse: { enum: 2, color: 'rgb(50, 207, 193)', colorTransparent: 'rgba(50, 207, 193, 0.75)' },
+    SharpTurns: { enum: 3, color: 'rgb(198, 191, 255)', colorTransparent: 'rgba(198, 191, 255, 0.75)' },
+    ThickLine: { enum: 4, color: 'rgb(107, 194, 149)', colorTransparent: 'rgba(107, 194, 149, 0.75)' },
+    ThinLine: { enum: 5, color: 'rgb(194, 127, 107)', colorTransparent: 'rgba(194, 127, 107, 0.75)' },
+    Float: { enum: 6, color: 'rgb(255, 161, 46)', colorTransparent: 'rgba(255, 161, 46, 0.75)' },
+    Wrap: { enum: 7, color: 'rgb(218, 97, 255)', colorTransparent: 'rgba(218, 97, 255, 0.75)' },
+    Clear: { enum: 8, color: 'rgb(245, 245, 245)', colorTransparent: 'rgba(245, 245, 245, 0.75)' },
+};
 
 class PowerUp {
     constructor(x, y, id, type, players, color, text, others) {
@@ -27,20 +27,20 @@ class PowerUp {
     }
 
     draw() {
-        const borderColor = "yellow";
+        const borderColor = this.color;
         const fontSize = 20;
 
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fillStyle = this.color;
+        ctx.fillStyle = this.type.color;
         ctx.fill();
 
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 5;
         ctx.strokeStyle = borderColor;
         ctx.stroke();
         ctx.closePath();
 
-        ctx.fillStyle = "white";
+        ctx.fillStyle = "black";
         ctx.font = `${fontSize}px Arial`;
 
         const textWidth = ctx.measureText(this.text).width;

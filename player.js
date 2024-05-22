@@ -23,13 +23,14 @@ class Player {
         this.eliminated = false;
         this.score = 0;
         this.powerUps = this.initializePowerUps();
+        this.powerUpDuration = 250;
     }
 
     initializePowerUps() {
         const powerUpDictionary = {};
 
         for (const key in PowerUpType) {
-            powerUpDictionary[PowerUpType[key]] = [];
+            powerUpDictionary[PowerUpType[key].enum] = [];
             
         }
 
@@ -38,7 +39,7 @@ class Player {
 
     decrementPowerUpDurations() {
         for (const value in PowerUpType) {
-            const key = PowerUpType[value];
+            const key = PowerUpType[value].enum;
             for (let i = 0; i < this.powerUps[key].length; i++) {
                 this.powerUps[key][i] -= 1;
             }
@@ -47,12 +48,11 @@ class Player {
     }
 
     addPowerUp(type) {
-        const powerUpDuration = 250;
-        this.powerUps[type].push(powerUpDuration);
+        this.powerUps[type.enum].push(this.powerUpDuration);
     }
 
     speedUpMultiplier() {
-        return Math.pow(2, this.powerUps[PowerUpType.SpeedUp].length);
+        return Math.pow(2, this.powerUps[PowerUpType.SpeedUp.enum].length);
     }
 
     getSpeed() {
@@ -60,15 +60,15 @@ class Player {
     }
 
     slowDownMultiplier() {
-        return Math.pow(2, this.powerUps[PowerUpType.SlowDown].length);
+        return Math.pow(2, this.powerUps[PowerUpType.SlowDown.enum].length);
     }
 
     thickLineMultiplier() {
-        return Math.pow(2, this.powerUps[PowerUpType.ThickLine].length);
+        return Math.pow(2, this.powerUps[PowerUpType.ThickLine.enum].length);
     }
 
     thinLineMultiplier() {
-        return Math.pow(2, this.powerUps[PowerUpType.ThinLine].length);
+        return Math.pow(2, this.powerUps[PowerUpType.ThinLine.enum].length);
     }
 
     getSize() {
@@ -76,27 +76,27 @@ class Player {
     }
 
     hasReverseControls() {
-        return this.powerUps[PowerUpType.Reverse].length > 0;
+        return this.powerUps[PowerUpType.Reverse.enum].length > 0;
     }
 
     hasFloatPowerUp() {
-        return this.powerUps[PowerUpType.Float].length > 0;
+        return this.powerUps[PowerUpType.Float.enum].length > 0;
     }
 
     hasSharpTurns() {
-        return this.powerUps[PowerUpType.SharpTurns].length > 0;
+        return this.powerUps[PowerUpType.SharpTurns.enum].length > 0;
     }
 
     getAngle() {
         if (this.hasSharpTurns()) {
-            return Math.PI;
+            return Math.PI / 2;
         }
 
         return this.turningSpeed; // * this.speedUpMultiplier() 
     }
 
     canWrap() {
-        return this.powerUps[PowerUpType.Wrap].length > 0;
+        return this.powerUps[PowerUpType.Wrap.enum].length > 0;
     }
 
     setKeys(left, right) {
@@ -139,30 +139,39 @@ class Player {
         if (gameIndex < immuneLength / 2) {
             this.drawArrow();
         }
-        let color = this.hasReverseControls() ? "cyan" : this.color,
-            size = this.getSize();
-
+        const size = this.getSize();
         
         this.trail.draw(this.ctx, this.color);
 
         this.ctx.beginPath();
         this.ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
-        this.ctx.fillStyle = color;
+        this.ctx.fillStyle = this.color;
         this.ctx.fill();
-
-        if (this.canWrap()) {
-            this.giveYellowBorder();
-        }
-
         this.ctx.closePath();
 
-        this.highlightFrontArea();
+        this.drawPowerUpCircles();
     }
 
-    giveYellowBorder() {
-        this.ctx.lineWidth = 2;
-        this.ctx.strokeStyle = "yellow";
-        this.ctx.stroke();
+    drawPowerUpCircles() {
+        let i = 1;
+        
+        for (const value in PowerUpType) {
+            const key = PowerUpType[value].enum;
+            for (let j = 0; j < this.powerUps[key].length; j++) {
+                const percentage = this.powerUps[key][j] / this.powerUpDuration,
+                    endAngle = (percentage) * 2 * Math.PI;
+                
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.getSize() + (i * 10), 0, endAngle);
+                ctx.strokeStyle = PowerUpType[value].colorTransparent;
+                ctx.lineWidth = 8;
+                ctx.stroke();
+                ctx.closePath();
+                
+                i += 1;
+            }
+        }
+        
     }
 
     isOverlappingPoint(point) {

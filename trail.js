@@ -51,6 +51,14 @@ class TrailSegment {
             return;
         }
 
+        // for (let i = 0; i < this.points.length; i++) {
+        //     ctx.beginPath();
+        //     ctx.arc(this.points[i].x, this.points[i].y, this.points[i].size, 0, Math.PI * 2);
+        //     ctx.fillStyle = 'rgba(200, 100, 0, 0.8)';
+        //     ctx.fill();
+        //     ctx.closePath();
+        // }
+
         ctx.beginPath();
         ctx.strokeStyle = color;
 

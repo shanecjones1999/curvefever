@@ -88,7 +88,7 @@ class Game {
                 const segments = this.players[j].trail.segments;
                 for (let k = 0; k < segments.length; k++) {
                     const points = segments[k].points;
-                    for (let l = 0; l < points.length; l ++) {
+                    for (let l = 0; l < points.length; l++) {
                         if (this.players[i].isOverlappingPoint(points[l])) {
                             this.eliminatePlayer(this.players[i]);
                         }
@@ -106,11 +106,11 @@ class Game {
     }
 
     generatePowerUps() {
-        const shouldGenerate = Math.floor(Math.random() * 200) == 1;
+        const shouldGenerate = Math.floor(Math.random() * 100) == 1;
         if (shouldGenerate) {
 
             const type =  Math.floor(Math.random() * 15),
-                powerUp = PowerUpFactory.Create(0, this.players);
+                powerUp = PowerUpFactory.Create(type, this.players);
 
             if (powerUp) {
                 this.powerUps.push(powerUp);
