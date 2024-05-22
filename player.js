@@ -48,7 +48,7 @@ class Player {
     }
 
     addPowerUp(powerUpType, applyType) {
-        const color = applyType == ApplyType.Self ? 'rgba(2, 163, 12, 0.5)' : applyType == ApplyType.Others ? 'rbga(242, 0, 0, 0.5)' : 'rgba(88, 66, 255, 0.6)';
+        const color = applyType == ApplyType.Self ? 'rgba(0, 255, 0, 0.7)' : applyType == ApplyType.Others ? 'rgba(255, 0, 0, 0.7)' : 'rgba(0, 0, 255, 0.7)';
         this.powerUps[powerUpType].push({ duration: this.powerUpDuration, color: color });
     }
 
