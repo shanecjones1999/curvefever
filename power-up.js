@@ -1,6 +1,8 @@
 // Spawn more powerups
 // Mystery
 
+const powerUpDuration = 250;
+
 const PowerUpType = {
     SpeedUp: 0,
     SlowDown: 1,
@@ -29,7 +31,7 @@ class PowerUp {
         this.text = text;
         this.applyType = applyType;
         this.radius = 40;
-        this.duration = 250;
+        this.duration = powerUpDuration;
         this.color = applyType == ApplyType.Self ? 'rgba(0, 255, 0, 0.7)' 
             : applyType == ApplyType.Others ? 'rgba(255, 0, 0, 0.7)' 
             : 'rgba(0, 0, 255, 0.7)'

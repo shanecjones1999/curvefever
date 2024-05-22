@@ -15,7 +15,7 @@ class Player {
         this.trail = new Trail();
         this.trail.createSegment();
         this.size = radius;
-        this.turningSpeed = 0.045;
+        this.turningSpeed = 0.04;
         this.speed = 2;
         this.id = id
         this.lastTrailSkip = immuneLength;
@@ -23,7 +23,6 @@ class Player {
         this.eliminated = false;
         this.score = 0;
         this.powerUps = this.initializePowerUps();
-        this.powerUpDuration = 250;
     }
 
     initializePowerUps() {
@@ -92,7 +91,7 @@ class Player {
             return Math.PI / 2;
         }
 
-        return this.turningSpeed; // * this.speedUpMultiplier() 
+        return Math.max(this.turningSpeed, this.turningSpeed * this.speedUpMultiplier() * .70)
     }
 
     canWrap() {
@@ -158,7 +157,7 @@ class Player {
         for (const value in PowerUpType) {
             const key = PowerUpType[value];
             for (let j = 0; j < this.powerUps[key].length; j++) {
-                const percentage = this.powerUps[key][j].duration / this.powerUpDuration,
+                const percentage = this.powerUps[key][j].duration / powerUpDuration,
                     endAngle = (percentage) * 2 * Math.PI;
                 
                 ctx.beginPath();
@@ -317,7 +316,7 @@ class Player {
 
         if (!this.hasFloatPowerUp() && !this.hasTrail && gameIndex > immuneLength) {
             const dist = this.distanceFromHeadToRecentTrail();
-            if (dist >= Math.max(size * 8, playerRadius * 8)) {
+            if (dist >= Math.max(size * 6, playerRadius * 6)) {
                 this.trail.createSegment();
                 this.hasTrail = true;
             }

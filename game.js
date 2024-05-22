@@ -119,7 +119,7 @@ class Game {
     }
 
     generatePowerUps() {
-        const shouldGenerate = Math.floor(Math.random() * 200) == 1;
+        const shouldGenerate = Math.floor(Math.random() * 600) == 1;
         if (shouldGenerate) {
 
             const type =  Math.floor(Math.random() * 15),
