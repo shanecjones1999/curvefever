@@ -47,9 +47,8 @@ class Player {
         }
     }
 
-    addPowerUp(powerUpType, applyType) {
-        const color = applyType == ApplyType.Self ? 'rgba(0, 255, 0, 0.7)' : applyType == ApplyType.Others ? 'rgba(255, 0, 0, 0.7)' : 'rgba(0, 0, 255, 0.7)';
-        this.powerUps[powerUpType].push({ duration: this.powerUpDuration, color: color });
+    addPowerUp(powerUp) {
+        this.powerUps[powerUp.type].push(powerUp);
     }
 
     speedUpMultiplier() {
@@ -386,45 +385,6 @@ class Player {
             this.y = 0;
             this.trail.createSegment();
         }
-    }
-
-    // Updated collision
-
-    isCircleIntersectingLineWithDirection(point1, point2, viewAngle = Math.PI) {
-        const { x: cx, y: cy, playerAngle } = this,
-            radius = this.getSize() + point2.size;
-    
-        // Calculate the perpendicular distance from the circle center to the line segment
-        const lineLength = Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
-        const dotProduct = (((cx - point1.x) * (point2.x - point1.x)) + ((cy - point1.y) * (point2.y - point1.y))) / (lineLength ** 2);
-        const closestX = point1.x + (dotProduct * (point2.x - point1.x));
-        const closestY = point1.y + (dotProduct * (point2.y - point1.y));
-    
-        // Calculate the distance from the circle center to the closest point on the line segment
-        const distanceToClosest = Math.sqrt((closestX - cx) ** 2 + (closestY - cy) ** 2);
-    
-        // Check if the closest point is within the segment bounds and the circle intersects with the segment
-        const withinSegmentBounds = (closestX >= Math.min(point1.x, point2.x) && closestX <= Math.max(point1.x, point2.x)) &&
-                                    (closestY >= Math.min(point1.y, point2.y) && closestY <= Math.max(point1.y, point2.y));
-    
-        if (withinSegmentBounds && distanceToClosest <= radius) {
-            // Check if the closest point is within the player's view angle
-            const vectorToClosestX = closestX - cx;
-            const vectorToClosestY = closestY - cy;
-            const distanceToPoint = Math.sqrt(vectorToClosestX * vectorToClosestX + vectorToClosestY * vectorToClosestY);
-            const normalizedVectorX = vectorToClosestX / distanceToPoint;
-            const normalizedVectorY = vectorToClosestY / distanceToPoint;
-    
-            const directionX = Math.cos(playerAngle);
-            const directionY = Math.sin(playerAngle);
-    
-            const dotProductDirection = normalizedVectorX * directionX + normalizedVectorY * directionY;
-            const angle = Math.acos(dotProductDirection);
-    
-            return angle <= (viewAngle / 2);
-        }
-    
-        return false;
     }
 
     isCircleIntersectingSegment(point1, point2) {

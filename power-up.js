@@ -29,6 +29,10 @@ class PowerUp {
         this.text = text;
         this.applyType = applyType;
         this.radius = 40;
+        this.duration = 250;
+        this.color = applyType == ApplyType.Self ? 'rgba(0, 255, 0, 0.7)' 
+            : applyType == ApplyType.Others ? 'rgba(255, 0, 0, 0.7)' 
+            : 'rgba(0, 0, 255, 0.7)'
     }
 
     draw() {
@@ -56,17 +60,17 @@ class PowerUp {
         switch (this.applyType) {
             case ApplyType.Self:
                 const player = this.players.filter(plyr => plyr.id == sourceId)[0];
-                player.addPowerUp(this.type, this.applyType);
+                player.addPowerUp(this);
                 break;
             case ApplyType.All:
                 for (let i = 0; i < this.players.length; i++) {
-                    this.players[i].addPowerUp(this.type, this.applyType);
+                    this.players[i].addPowerUp(this);
                 }
                 break;
             case ApplyType.Others:
                 for (let i = 0; i < this.players.length; i++) {
                     if (this.players[i].id != sourceId) {
-                        this.players[i].addPowerUp(this.type, this.applyType);
+                        this.players[i].addPowerUp(this);
                     }
                 }
                 break;

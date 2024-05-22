@@ -119,11 +119,11 @@ class Game {
     }
 
     generatePowerUps() {
-        const shouldGenerate = Math.floor(Math.random() * 600) == 1;
+        const shouldGenerate = Math.floor(Math.random() * 200) == 1;
         if (shouldGenerate) {
 
             const type =  Math.floor(Math.random() * 15),
-                powerUp = PowerUpFactory.Create(7, this.players);
+                powerUp = PowerUpFactory.Create(type, this.players);
 
             if (powerUp) {
                 this.powerUps.push(powerUp);
