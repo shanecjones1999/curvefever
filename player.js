@@ -30,7 +30,7 @@ class Player {
         const powerUpDictionary = {};
 
         for (const key in PowerUpType) {
-            powerUpDictionary[PowerUpType[key].enum] = [];
+            powerUpDictionary[PowerUpType[key]] = [];
             
         }
 
@@ -39,20 +39,21 @@ class Player {
 
     decrementPowerUpDurations() {
         for (const value in PowerUpType) {
-            const key = PowerUpType[value].enum;
+            const key = PowerUpType[value];
             for (let i = 0; i < this.powerUps[key].length; i++) {
-                this.powerUps[key][i] -= 1;
+                this.powerUps[key][i].duration -= 1;
             }
-            this.powerUps[key] = this.powerUps[key].filter(p => p > 0);
+            this.powerUps[key] = this.powerUps[key].filter(p => p.duration > 0);
         }
     }
 
-    addPowerUp(type) {
-        this.powerUps[type.enum].push(this.powerUpDuration);
+    addPowerUp(powerUpType, applyType) {
+        const color = applyType == ApplyType.Self ? 'rgba(2, 163, 12, 0.5)' : applyType == ApplyType.Others ? 'rbga(242, 0, 0, 0.5)' : 'rgba(88, 66, 255, 0.6)';
+        this.powerUps[powerUpType].push({ duration: this.powerUpDuration, color: color });
     }
 
     speedUpMultiplier() {
-        return Math.pow(2, this.powerUps[PowerUpType.SpeedUp.enum].length);
+        return Math.pow(2, this.powerUps[PowerUpType.SpeedUp].length);
     }
 
     getSpeed() {
@@ -60,15 +61,15 @@ class Player {
     }
 
     slowDownMultiplier() {
-        return Math.pow(2, this.powerUps[PowerUpType.SlowDown.enum].length);
+        return Math.pow(2, this.powerUps[PowerUpType.SlowDown].length);
     }
 
     thickLineMultiplier() {
-        return Math.pow(2, this.powerUps[PowerUpType.ThickLine.enum].length);
+        return Math.pow(2, this.powerUps[PowerUpType.ThickLine].length);
     }
 
     thinLineMultiplier() {
-        return Math.pow(2, this.powerUps[PowerUpType.ThinLine.enum].length);
+        return Math.pow(2, this.powerUps[PowerUpType.ThinLine].length);
     }
 
     getSize() {
@@ -76,15 +77,15 @@ class Player {
     }
 
     hasReverseControls() {
-        return this.powerUps[PowerUpType.Reverse.enum].length > 0;
+        return this.powerUps[PowerUpType.Reverse].length > 0;
     }
 
     hasFloatPowerUp() {
-        return this.powerUps[PowerUpType.Float.enum].length > 0;
+        return this.powerUps[PowerUpType.Float].length > 0;
     }
 
     hasSharpTurns() {
-        return this.powerUps[PowerUpType.SharpTurns.enum].length > 0;
+        return this.powerUps[PowerUpType.SharpTurns].length > 0;
     }
 
     getAngle() {
@@ -96,7 +97,7 @@ class Player {
     }
 
     canWrap() {
-        return this.powerUps[PowerUpType.Wrap.enum].length > 0;
+        return this.powerUps[PowerUpType.Wrap].length > 0;
     }
 
     setKeys(left, right) {
@@ -156,14 +157,14 @@ class Player {
         let i = 1;
         
         for (const value in PowerUpType) {
-            const key = PowerUpType[value].enum;
+            const key = PowerUpType[value];
             for (let j = 0; j < this.powerUps[key].length; j++) {
-                const percentage = this.powerUps[key][j] / this.powerUpDuration,
+                const percentage = this.powerUps[key][j].duration / this.powerUpDuration,
                     endAngle = (percentage) * 2 * Math.PI;
                 
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.getSize() + (i * 10), 0, endAngle);
-                ctx.strokeStyle = PowerUpType[value].colorTransparent;
+                ctx.strokeStyle = this.powerUps[key][j].color;
                 ctx.lineWidth = 8;
                 ctx.stroke();
                 ctx.closePath();
@@ -385,5 +386,44 @@ class Player {
             this.y = 0;
             this.trail.createSegment();
         }
+    }
+
+    // Updated collision
+
+    isCircleIntersectingLineWithDirection(point1, point2, viewAngle = Math.PI) {
+        const { x: cx, y: cy, playerAngle } = this,
+            radius = this.getSize() + point2.size;
+    
+        // Calculate the perpendicular distance from the circle center to the line segment
+        const lineLength = Math.sqrt((point2.x - point1.x) ** 2 + (point2.y - point1.y) ** 2);
+        const dotProduct = (((cx - point1.x) * (point2.x - point1.x)) + ((cy - point1.y) * (point2.y - point1.y))) / (lineLength ** 2);
+        const closestX = point1.x + (dotProduct * (point2.x - point1.x));
+        const closestY = point1.y + (dotProduct * (point2.y - point1.y));
+    
+        // Calculate the distance from the circle center to the closest point on the line segment
+        const distanceToClosest = Math.sqrt((closestX - cx) ** 2 + (closestY - cy) ** 2);
+    
+        // Check if the closest point is within the segment bounds and the circle intersects with the segment
+        const withinSegmentBounds = (closestX >= Math.min(point1.x, point2.x) && closestX <= Math.max(point1.x, point2.x)) &&
+                                    (closestY >= Math.min(point1.y, point2.y) && closestY <= Math.max(point1.y, point2.y));
+    
+        if (withinSegmentBounds && distanceToClosest <= radius) {
+            // Check if the closest point is within the player's view angle
+            const vectorToClosestX = closestX - cx;
+            const vectorToClosestY = closestY - cy;
+            const distanceToPoint = Math.sqrt(vectorToClosestX * vectorToClosestX + vectorToClosestY * vectorToClosestY);
+            const normalizedVectorX = vectorToClosestX / distanceToPoint;
+            const normalizedVectorY = vectorToClosestY / distanceToPoint;
+    
+            const directionX = Math.cos(playerAngle);
+            const directionY = Math.sin(playerAngle);
+    
+            const dotProductDirection = normalizedVectorX * directionX + normalizedVectorY * directionY;
+            const angle = Math.acos(dotProductDirection);
+    
+            return angle <= (viewAngle / 2);
+        }
+    
+        return false;
     }
 }

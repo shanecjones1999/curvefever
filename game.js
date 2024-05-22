@@ -84,12 +84,25 @@ class Game {
                 this.eliminatePlayer(this.players[i]);
                 continue;
             }
+
+            // for (let j = 0; j < this.players.length; j++) {
+            //     const segments = this.players[j].trail.segments;
+            //     for (let k = 0; k < segments.length; k++) {
+            //         const points = segments[k].points;
+            //         for (let l = 0; l < points.length; l++) {
+            //             if (this.players[i].isOverlappingPoint(points[l])) {
+            //                 this.eliminatePlayer(this.players[i]);
+            //             }
+            //         }
+            //     }
+            // }
+
             for (let j = 0; j < this.players.length; j++) {
                 const segments = this.players[j].trail.segments;
                 for (let k = 0; k < segments.length; k++) {
                     const points = segments[k].points;
-                    for (let l = 0; l < points.length; l++) {
-                        if (this.players[i].isOverlappingPoint(points[l])) {
+                    for (let l = 1; l < points.length; l++) {
+                        if (this.players[i].isCircleIntersectingLineWithDirection(points[l-1], points[l])) {
                             this.eliminatePlayer(this.players[i]);
                         }
                     }
@@ -110,7 +123,7 @@ class Game {
         if (shouldGenerate) {
 
             const type =  Math.floor(Math.random() * 15),
-                powerUp = PowerUpFactory.Create(type, this.players);
+                powerUp = PowerUpFactory.Create(4, this.players);
 
             if (powerUp) {
                 this.powerUps.push(powerUp);
